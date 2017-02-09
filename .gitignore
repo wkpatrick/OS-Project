@@ -36,3 +36,7 @@ Debug/
 *.app
 
 *.tlog
+
+\.vs/OS-Project/v14/\.suo
+
+*.sdf
