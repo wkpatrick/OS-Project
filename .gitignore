@@ -5,6 +5,11 @@
 *.obj
 *.pdb
 Debug/
+*.spdf
+.vscode
+*.opensdf
+*.ilk
+*.idb   
 
 # Precompiled Headers
 *.gch
@@ -29,3 +34,5 @@ Debug/
 *.exe
 *.out
 *.app
+
+*.tlog
