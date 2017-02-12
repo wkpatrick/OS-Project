@@ -145,12 +145,15 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Src\CPU.cpp" />
     <ClCompile Include="Src\OS-Project.cpp" />
     <ClCompile Include="Src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Src\CPU.h" />
     <ClInclude Include="Src\OS-Project.h" />
     <ClInclude Include="Src\stdafx.h" />
     <ClInclude Include="Src\targetver.h" />
