@@ -44,3 +44,7 @@ Debug/
 ipch/OS-PROJECT-292ec8b3/
 
 Release/
+
+*.ipch
+
+OS-Project\.VC\.db
