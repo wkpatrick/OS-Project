@@ -44,7 +44,7 @@
     <ClInclude Include="Src\CPU.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="PCB.h">
+    <ClInclude Include="Src\PCB.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

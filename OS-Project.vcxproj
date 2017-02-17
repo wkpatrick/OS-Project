@@ -155,9 +155,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="PCB.h" />
     <ClInclude Include="Src\CPU.h" />
     <ClInclude Include="Src\OS-Project.h" />
+    <ClInclude Include="Src\PCB.h" />
     <ClInclude Include="Src\stdafx.h" />
     <ClInclude Include="Src\targetver.h" />
   </ItemGroup>
