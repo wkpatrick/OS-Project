@@ -147,7 +147,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\CPU.cpp" />
+    <ClCompile Include="Src\Memory.cpp" />
     <ClCompile Include="Src\OS-Project.cpp" />
+    <ClCompile Include="Src\PCB.cpp" />
     <ClCompile Include="Src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -156,6 +158,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CPU.h" />
+    <ClInclude Include="Src\Memory.h" />
     <ClInclude Include="Src\OS-Project.h" />
     <ClInclude Include="Src\PCB.h" />
     <ClInclude Include="Src\stdafx.h" />

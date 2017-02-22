@@ -6,10 +6,8 @@ enum STATUS
 	READY,
 	WAIT,
 	NEW,
-	TERMINATED,
-	TERMINATED_SAVED
+	TERMINATED
 };
-
 
 struct PCB {
 	unsigned int cpuID;
@@ -21,6 +19,8 @@ struct PCB {
 	int inputBufferSize;
 	int outputBufferSize;
 	int tempBufferSize;
+	//addresses are start index of disk/ram array
+	//EX: if input buffer if from indices 134 - 150, inputBufferRamAddress would equal 134
 	unsigned int inputBufferRamAddress;
 	unsigned int outputBufferRamAddress;
 	unsigned int tempBufferRamAddress;
@@ -28,3 +28,22 @@ struct PCB {
 	unsigned int codeStartRamAddress;
 	unsigned int dataStartDiskAddress;
 };
+
+class PCBList
+{
+public:
+	PCBList();
+
+	//insert new pcb at location jobID
+	//make sure inserted PCB was made in the heap
+	void insert(int jobID, PCB pcb) { pcbs[jobID] = pcb; }
+	//returns a pointer of the PCB with jobID
+	PCB* getPCB(int jobID) { return &pcbs[jobID]; }
+
+private:
+	static const int numJobs = 31;
+	//the index of the pcb is the jobs ID
+	//0 is not used since first jobID is 1
+	PCB pcbs[numJobs];
+};
+

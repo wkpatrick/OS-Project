@@ -3,6 +3,8 @@
 
 #include "stdafx.h"
 #include "CPU.h"
+#include "Memory.h"
+#include "PCB.h"
 #include <iostream>
 typedef unsigned long int WORD;
 typedef unsigned char BYTE;
@@ -11,14 +13,15 @@ using namespace std;
 
 int main()
 {
-	WORD Disk[2048];
-	WORD Ram[1024];
+	Memory disk = Memory(2048);
+	Memory ram = Memory(1024);
+	PCBList pcbs = PCBList();
+	
 
-	memset(Disk, 0, sizeof(Disk));
-	memset(Ram, 0, sizeof(Ram));
+	ram.addWord(0xFFFFFFFF); //You can assign data this way
+	ram.setWord(0x0000001,32); //You can address ram in hex as well, and assign decimals, it all works.
 
-	Ram[0] = 0xFFFFFFFF; //You can assign data this way
-	Ram[0x0000001] = 32; //You can address ram in hex as well, and assign decimals, it all works.
+	cout << ram.getWord(1) << endl;
 
 	int test;
 	std::cout << "Hello world!" << std::endl;
