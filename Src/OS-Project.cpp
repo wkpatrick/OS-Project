@@ -5,7 +5,9 @@
 #include "CPU.h"
 #include "Memory.h"
 #include "PCB.h"
+#include "LongTermScheduler.h"
 #include <iostream>
+#include <queue>
 typedef unsigned long int WORD;
 typedef unsigned char BYTE;
 
@@ -16,7 +18,10 @@ int main()
 	Memory disk = Memory(2048);
 	Memory ram = Memory(1024);
 	PCBList pcbs = PCBList();
-	
+	//queue stores id of PCB
+	queue<int> readyQ;
+
+	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ);
 
 	ram.addWord(0xFFFFFFFF); //You can assign data this way
 	ram.setWord(0x0000001,32); //You can address ram in hex as well, and assign decimals, it all works.

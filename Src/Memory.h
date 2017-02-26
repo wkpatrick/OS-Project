@@ -12,6 +12,7 @@ public:
 	WORD getWord(int index) { return memory[index]; }
 	int getSize() { return size; }
 	int getAvaliableSpace() { return capacity - size; }
+	void clear();
 
 private:
 	int size = 0;

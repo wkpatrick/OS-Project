@@ -6,8 +6,7 @@ Memory::Memory(int cap)
 {
 	capacity = cap;
 	memory = new WORD[capacity];
-	for (int i = 0; i < capacity; i++)
-		memory[i] = 0;
+	clear();
 }
 
 Memory::~Memory()
@@ -22,4 +21,11 @@ void Memory::addWord(WORD word)
 
 	memory[size] = word;
 	size++;
+}
+
+void Memory::clear()
+{
+	for (int i = 0; i < capacity; i++)
+		memory[i] = 0;
+	size = 0;
 }
