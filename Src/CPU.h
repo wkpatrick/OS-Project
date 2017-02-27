@@ -11,9 +11,10 @@ class CPU
 	vector<WORD> InputBuffer;
 	vector<WORD> OutputBuffer;
 	vector<WORD> TempBuffer;
+	Memory cpuRAM;
 
 public:
-	CPU();
+	CPU(Memory &ram);
 	~CPU();
 
 	int busy; // 0 is idle, 1 is busy

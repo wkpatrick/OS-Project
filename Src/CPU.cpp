@@ -1,17 +1,15 @@
 #include "stdafx.h"
 #include "CPU.h"
+#include "Memory.h"
 
 
-CPU::CPU()
+CPU::CPU(Memory &ram)
 {
 	memset(Registers, 0, sizeof(Registers));
 	busy = 0;
+	this->cpuRAM = ram;
 }
 
-
-CPU::~CPU()
-{
-}
 
 void CPU::Execute(WORD opcode)
 {
@@ -93,14 +91,32 @@ void CPU::OPCode01(WORD opcode)
 	InputBuffer.push_back(Registers[regOne]);
 }
 
-void CPU::OPCode02(WORD opcode)
+void CPU::OPCode02(WORD opcode) //Stores the contents of baseReg in address
 {
-	//TODO   Need The GateKeeper Implemented
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
+
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
+
+	cpuRAM.setWord(address, Registers[baseReg]);
+
+
 }
 
-void CPU::OPCode03(WORD opcode)
+void CPU::OPCode03(WORD opcode) //Loads the contents of address into basereg
 {
-	//TODO Need The GateKeeper Implmented
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
+
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
+
+	Registers[baseReg] = cpuRAM.getWord(address);
 }
 
 void CPU::OPCode04(WORD opcode)
@@ -248,5 +264,17 @@ void CPU::OPCode19(WORD opcode)
 
 void CPU::OPCode1A(WORD opcode)
 {
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
+
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
+
+	if (Registers[baseReg] < 0)
+	{
+
+	}
 }
 

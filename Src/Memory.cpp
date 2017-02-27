@@ -9,6 +9,13 @@ Memory::Memory(int cap)
 	clear();
 }
 
+Memory::Memory()
+{
+	capacity = 1024;
+	memory = new WORD[capacity];
+	clear();
+}
+
 Memory::~Memory()
 {
 	delete[] memory;

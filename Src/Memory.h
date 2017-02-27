@@ -5,6 +5,7 @@ class Memory
 {
 public:
 	Memory(int size);
+	Memory();
 	~Memory();
 	//add a word at the next avaliable location
 	void addWord(WORD word);
