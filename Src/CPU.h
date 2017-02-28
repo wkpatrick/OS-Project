@@ -1,5 +1,7 @@
 #pragma once
 #include <vector>
+#include "Memory.h"
+#include "PCB.h"
 typedef unsigned long int WORD;
 typedef unsigned char BYTE;
 
@@ -11,15 +13,21 @@ class CPU
 	vector<WORD> InputBuffer;
 	vector<WORD> OutputBuffer;
 	vector<WORD> TempBuffer;
+	WORD inputBufferRamADDR;
+	WORD outputBufferRamADDR;
+	WORD inputBufferRamSize;
+	WORD outputBufferRamSize;
 	Memory cpuRAM;
+	int status; //0 for done, 1 for working
 
 public:
+	CPU();
 	CPU(Memory &ram);
 	~CPU();
 
 	int busy; // 0 is idle, 1 is busy
-	void BeginJob();
 	WORD GetNextWord();
+	void BeginJob(PCB & pcb);
 	void Execute(WORD word);
 
 private:
