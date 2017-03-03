@@ -142,11 +142,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Text Include="..\..\..\Downloads\Program-File.txt" />
+    <Text Include="Program-File.txt" />
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\CPU.cpp" />
+    <ClCompile Include="Src\Loader.cpp" />
     <ClCompile Include="Src\LongTermScheduler.cpp" />
     <ClCompile Include="Src\Memory.cpp" />
     <ClCompile Include="Src\OS-Project.cpp" />
@@ -159,6 +160,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CPU.h" />
+    <ClInclude Include="Src\Loader.h" />
     <ClInclude Include="Src\LongTermScheduler.h" />
     <ClInclude Include="Src\Memory.h" />
     <ClInclude Include="Src\OS-Project.h" />

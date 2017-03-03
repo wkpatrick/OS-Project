@@ -6,6 +6,7 @@
 #include "Memory.h"
 #include "PCB.h"
 #include "LongTermScheduler.h"
+#include "Loader.h"
 #include <iostream>
 #include <queue>
 typedef unsigned long int WORD;
@@ -21,34 +22,18 @@ int main()
 	//queue stores id of PCB
 	queue<int> readyQ;
 
+	Loader loader = Loader(&disk, &pcbs);
+	loader.load_file();
+
 	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ);
 
-	ram.addWord(0xFFFFFFFF); //You can assign data this way
-	ram.setWord(0x0000001,32); //You can address ram in hex as well, and assign decimals, it all works.
-
-	cout << ram.getWord(1) << endl;
+	while (!LTScheduler.AllJobsFinished()) {
+		LTScheduler.LoadProcessesToRam();
+		//dispatch stuff
+		//cpu stuff
+	}
 
 	int test;
-	std::cout << "Hello world!" << std::endl;
-	WORD testByte = 0b10100000000000000000000000000000;   //How you define a number in binary;
-	WORD testWord = 0xFFFFFFFF;
-
-	WORD first2Bits = 0b11000000000000000000000000000000;
-	
-	unsigned char testBorks = 0b11111111;
-	unsigned char twoBork = 0b11110000;
-
-	unsigned char result = (testBorks & twoBork) >> 4;
-	WORD testResult = (testWord & first2Bits) >> 30;
-
-
-	cout << "First 2 bits " << result << endl;
-
-
-
-
-
-
 	std::cin >> test;
     return 0;
 }

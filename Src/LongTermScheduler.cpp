@@ -1,6 +1,9 @@
 #pragma once
 #include "stdafx.h"
 #include "LongTermScheduler.h"
+#include <iostream>
+
+using namespace std;
 
 LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *list, queue<int> *rQ)
 {
@@ -37,24 +40,26 @@ void LongTermScheduler::LoadProcessesToRam()
 			if (ram->getAvaliableSpace() >= spaceNeeded) {
 				process->codeStartRamAddress = ram->getSize();
 				process->pc = ram->getSize();
-				for (int i = 0; i < process->codeSize; i++)
-					ram->setWord(ram->getSize() + i, disk->getWord(process->codeStartDiskAddress + i));
+				for (unsigned int i = 0; i < process->codeSize; i++)
+					ram->addWord(disk->getWord(process->codeStartDiskAddress + i));				
 
 				process->inputBufferRamAddress = ram->getSize();
 				for (int i = 0; i < process->inputBufferSize; i++)
-					ram->setWord(ram->getSize() + i, disk->getWord(process->dataStartDiskAddress + i));
+					ram->addWord(disk->getWord(process->dataStartDiskAddress + i));
 
 				process->outputBufferRamAddress = ram->getSize();
 				for (int i = 0; i < process->inputBufferSize; i++)
-					ram->setWord(ram->getSize() + i, 0x0);
+					ram->addWord(0x0);
 
 				process->tempBufferRamAddress = ram->getSize();
 				for (int i = 0; i < process->inputBufferSize; i++)
-					ram->setWord(ram->getSize() + i, 0x0);
+					ram->addWord(0x0);
 
 				//add process to read queue and remove from new queue
 				readyQ->push(newQ.front());
 				newQ.pop();
+				
+				//cout << hex << ram->getWord(PCBlist->getPCB(3)->codeStartRamAddress) << endl;
 			}
 		}
 	}

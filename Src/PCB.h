@@ -33,17 +33,18 @@ class PCBList
 {
 public:
 	PCBList();
+	~PCBList();
 
 	//insert new pcb at location jobID
 	//make sure inserted PCB was made in the heap
-	void insert(int jobID, PCB pcb) { pcbs[jobID] = pcb; }
+	//void insert(int jobID, PCB pcb) { pcbs[jobID] = pcb; }
 	//returns a pointer of the PCB with jobID
-	PCB* getPCB(int jobID) { return &pcbs[jobID]; }
+	PCB* getPCB(int jobID) { return pcbs[jobID]; }
 
 private:
 	static const int numJobs = 31;
 	//the index of the pcb is the jobs ID
 	//0 is not used since first jobID is 1
-	PCB pcbs[numJobs];
+	PCB *pcbs[numJobs];
 };
 
