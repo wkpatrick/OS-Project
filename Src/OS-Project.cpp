@@ -9,6 +9,7 @@
 #include "Loader.h"
 #include <iostream>
 #include <queue>
+#include "OS-Project.h"
 typedef unsigned long int WORD;
 typedef unsigned char BYTE;
 
@@ -19,6 +20,9 @@ int main()
 	Memory disk = Memory(2048);
 	Memory ram = Memory(1024);
 	PCBList pcbs = PCBList();
+	CPU cpu1 = CPU(&ram);
+
+
 	//queue stores id of PCB
 	queue<int> readyQ;
 
@@ -29,12 +33,13 @@ int main()
 
 	while (!LTScheduler.AllJobsFinished()) {
 		LTScheduler.LoadProcessesToRam();
+		cpu1.BeginJob(pcbs.getPCB(1));
 		//dispatch stuff
 		//cpu stuff
 	}
 
 	int test;
 	std::cin >> test;
-    return 0;
+	return 0;
 }
 

@@ -2,12 +2,21 @@
 #include "CPU.h"
 #include "Memory.h"
 #include "PCB.h"
+#include <iostream>
 
-CPU::CPU(Memory &ram)
+
+using namespace std;
+
+CPU::CPU(Memory *ram)
 {
 	memset(Registers, 0, sizeof(Registers));
 	busy = 0;
-	this->cpuRAM = ram;
+	this->cpuRAM = *ram;
+}
+
+CPU::~CPU()
+{
+	delete[] Registers;
 }
 
 
@@ -16,18 +25,20 @@ WORD CPU::GetNextWord()
 	return cpuRAM.getWord(ProgramCounter);
 }
 
-void CPU::BeginJob(PCB &pcb)
+void CPU::BeginJob(PCB *pcb)
 {
-	this->ProgramCounter = pcb.codeStartRamAddress;
 
-	this->inputBufferRamADDR = pcb.inputBufferRamAddress;
-	this->inputBufferRamSize = pcb.inputBufferSize;
+	std::cout << "input ram size" << pcb->inputBufferSize << endl;
+	this->ProgramCounter = pcb->codeStartRamAddress;
 
-	this->outputBufferRamADDR = pcb.outputBufferRamAddress;
-	this->outputBufferRamSize = pcb.outputBufferSize;
+	this->inputBufferRamADDR = pcb->inputBufferRamAddress;
+	this->inputBufferRamSize = pcb->inputBufferSize;
+
+	this->outputBufferRamADDR = pcb->outputBufferRamAddress;
+	this->outputBufferRamSize = pcb->outputBufferSize;
 	for (int i = 0; i < 16; i++)
 	{
-		Registers[i] = pcb.registers[i];
+		Registers[i] = pcb->registers[i];
 	}
 
 	status = 1;
