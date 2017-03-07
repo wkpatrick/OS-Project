@@ -33,7 +33,10 @@ int main()
 
 	while (!LTScheduler.AllJobsFinished()) {
 		LTScheduler.LoadProcessesToRam();
-		cpu1.BeginJob(pcbs.getPCB(1));
+		for (int i = 1; i < 30; i++)
+		{
+			cpu1.BeginJob(pcbs.getPCB(i));
+		}
 		//dispatch stuff
 		//cpu stuff
 	}

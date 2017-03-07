@@ -28,7 +28,9 @@ WORD CPU::GetNextWord()
 void CPU::BeginJob(PCB *pcb)
 {
 
-	std::cout << "input ram size" << pcb->inputBufferSize << endl;
+	//std::cout << "input ram size " << pcb->inputBufferSize << endl;
+	std::cout << "Ram Start Address. " << pcb->codeStartRamAddress << endl;
+	std::cout << "Data start Ram Address " << pcb->dataStartDiskAddress << endl;
 	this->ProgramCounter = pcb->codeStartRamAddress;
 
 	this->inputBufferRamADDR = pcb->inputBufferRamAddress;
