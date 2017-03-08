@@ -25,7 +25,7 @@ WORD CPU::GetNextWord()
 	return cpuRAM.getWord(ProgramCounter);
 }
 
-void CPU::BeginJob(PCB *pcb)
+void CPU::BeginJob()
 {
 
 	//std::cout << "input ram size " << pcb->inputBufferSize << endl;
@@ -51,6 +51,11 @@ void CPU::BeginJob(PCB *pcb)
 	}
 
 
+}
+
+void CPU::SetPCB(PCB * _pcb)
+{
+	pcb = _pcb;
 }
 
 void CPU::Execute(WORD opcode)
@@ -303,7 +308,8 @@ void CPU::OPCode0E(WORD opcode) //Divides what into the register. TEST!
 	WORD baseReg = (opcode & baseRegBitMask) >> 20;
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
-	Registers[destReg] = cpuRAM.getWord(address)/Registers[baseReg];
+	if(Registers[baseReg] != 0)
+		Registers[destReg] = cpuRAM.getWord(address)/Registers[baseReg];
 }
 
 void CPU::OPCode0F(WORD opcode)

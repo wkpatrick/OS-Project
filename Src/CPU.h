@@ -19,6 +19,7 @@ class CPU
 	WORD inputBufferRamSize;
 	WORD outputBufferRamSize;
 	Memory cpuRAM;
+	PCB *pcb;
 	int status; //0 for done, 1 for working
 
 public:
@@ -28,8 +29,9 @@ public:
 
 	int busy; // 0 is idle, 1 is busy
 	WORD GetNextWord();
-	void BeginJob(PCB *pcb);
+	void BeginJob();
 	void Execute(WORD word);
+	void SetPCB(PCB *_pcb);
 
 private:
 	void OPCode00(WORD opcode);

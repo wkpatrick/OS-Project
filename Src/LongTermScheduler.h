@@ -8,7 +8,8 @@ using namespace std;
 class LongTermScheduler
 {
 public:
-	LongTermScheduler(Memory *r, Memory *d, PCBList *list, queue<int> *rQ);
+	//scheduling method id: 0 = FIFO, 2 = Priority, 3 = SJF
+	LongTermScheduler(Memory *r, Memory *d, PCBList *list, queue<int> *rQ, int schedulingMethod);
 	~LongTermScheduler();
 	//loads processes from disk into ram until ready queue is full
 	//and only fills it up when the ready queue is empty
@@ -19,7 +20,7 @@ public:
 
 private:
 	Memory *disk, *ram;
-	PCBList* PCBlist;
+	PCBList* pcbs;
 	queue<int> *readyQ;
 	queue<int> newQ;
 };

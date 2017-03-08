@@ -2,19 +2,47 @@
 #include "stdafx.h"
 #include "LongTermScheduler.h"
 #include <iostream>
-
+#include <algorithm>
+#include <list>
 using namespace std;
 
-LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *list, queue<int> *rQ)
+LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue<int> *rQ, int schedulingMethod)
 {
 	disk = d;
 	ram = r;
-	PCBlist = list;
+	pcbs = _list;
 	readyQ = rQ;
 
 	//FIFO
-	for (int i = 1; i < 31; i++)
-		newQ.push(i);
+	switch (schedulingMethod)
+	{
+	case 0://FIFO
+		for (int i = 1; i < 31; i++)
+			newQ.push(i);
+		break;
+	case 1://Priority
+		priority_queue<int> pQ = priority_queue<int>();
+		for (int i = 1; i < 31; i++)
+			pQ.push(pcbs->getPCB(i)->priority);
+
+		list<int> tempL;
+		for (int i = 1; i < 31; i++)
+			tempL.push_front(i);
+
+		for (int i = 1; i < 31; i++) {
+			for (int j = 1; j < 31; j++) {
+				if (find(tempL.begin(), tempL.end(), j) != tempL.end()) {
+					if (pcbs->getPCB(j)->priority == pQ.top()) {
+						newQ.push(j);
+						tempL.remove(j);
+						pQ.pop();
+					}
+				}
+			}
+		}
+		break;
+	}
+
 	
 }
 
@@ -31,7 +59,7 @@ void LongTermScheduler::LoadProcessesToRam()
 	if (readyQ->size() == 0) {
 		ram->clear();
 		while (readyQ->size() < 10) {
-			PCB *process = PCBlist->getPCB(newQ.front());
+			PCB *process = pcbs->getPCB(newQ.front());
 
 			int spaceNeeded = process->codeSize + process->inputBufferSize + process->outputBufferSize
 				+ process->tempBufferSize;
@@ -58,6 +86,8 @@ void LongTermScheduler::LoadProcessesToRam()
 				//add process to read queue and remove from new queue
 				readyQ->push(newQ.front());
 				newQ.pop();
+				//add space stat
+				process->stats.ramSpaceUsed = (float)spaceNeeded / 1024;
 				
 				//cout << hex << ram->getWord(PCBlist->getPCB(3)->codeStartRamAddress) << endl;
 			}

@@ -10,6 +10,7 @@
 #include <iostream>
 #include <queue>
 #include "OS-Project.h"
+#include "Dispatcher.h"
 typedef unsigned long int WORD;
 typedef unsigned char BYTE;
 
@@ -22,23 +23,19 @@ int main()
 	PCBList pcbs = PCBList();
 	CPU cpu1 = CPU(&ram);
 
-
 	//queue stores id of PCB
 	queue<int> readyQ;
 
 	Loader loader = Loader(&disk, &pcbs);
 	loader.load_file();
 
-	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ);
+	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 1);
+	Dispatcher dispatcher = Dispatcher(&readyQ, &pcbs);
 
 	while (!LTScheduler.AllJobsFinished()) {
 		LTScheduler.LoadProcessesToRam();
-		for (int i = 1; i < 30; i++)
-		{
-			cpu1.BeginJob(pcbs.getPCB(i));
-		}
-		//dispatch stuff
-		//cpu stuff
+		dispatcher.Dispatch(&cpu1);
+		cpu1.BeginJob();
 	}
 
 	int test;

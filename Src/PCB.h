@@ -9,13 +9,20 @@ enum STATUS
 	TERMINATED
 };
 
+struct PerformanceStats {
+	unsigned long waitTime, avgWaitTime, completionTime, avgCompletionTime;
+	int ioReadCount, ioWriteCount;
+	float ramSpaceUsed, cacheSpaceUsed;
+};
+
 struct PCB {
 	unsigned int cpuID;
 	unsigned int pc;	//program counter
 	int status;	//STATUS enum used for this
 	unsigned int codeSize;
-	int priority;	// low # = high priority
+	int priority;	// high # = high priority
 	int registers[16];
+	PerformanceStats stats;
 	int inputBufferSize;
 	int outputBufferSize;
 	int tempBufferSize;

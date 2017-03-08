@@ -147,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Src\CPU.cpp" />
+    <ClCompile Include="Src\Dispatcher.cpp" />
     <ClCompile Include="Src\Loader.cpp" />
     <ClCompile Include="Src\LongTermScheduler.cpp" />
     <ClCompile Include="Src\Memory.cpp" />
@@ -160,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Src\CPU.h" />
+    <ClInclude Include="Src\Dispatcher.h" />
     <ClInclude Include="Src\Loader.h" />
     <ClInclude Include="Src\LongTermScheduler.h" />
     <ClInclude Include="Src\Memory.h" />
