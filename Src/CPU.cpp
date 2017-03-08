@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "CPU.h"
-#include "Memory.h"
 #include "PCB.h"
 #include <iostream>
 
@@ -9,7 +8,10 @@ using namespace std;
 
 CPU::CPU(Memory *ram)
 {
-	memset(Registers, 0, sizeof(Registers));
+	for (int i = 0; i < 16; i++)
+	{
+		Registers[i] = 0;
+	}
 	busy = 0;
 	this->cpuRAM = *ram;
 }
@@ -27,10 +29,7 @@ WORD CPU::GetNextWord()
 
 void CPU::BeginJob()
 {
-
-	//std::cout << "input ram size " << pcb->inputBufferSize << endl;
-	std::cout << "Ram Start Address. " << pcb->codeStartRamAddress << endl;
-	std::cout << "Data start Ram Address " << pcb->dataStartDiskAddress << endl;
+	cout << "Beginning Job" << endl;
 	this->ProgramCounter = pcb->codeStartRamAddress;
 
 	this->inputBufferRamADDR = pcb->inputBufferRamAddress;
@@ -50,6 +49,7 @@ void CPU::BeginJob()
 		ProgramCounter++;
 	}
 
+	cout << "Ending Job" << endl;
 
 }
 
@@ -66,58 +66,91 @@ void CPU::Execute(WORD opcode)
 	WORD firstTwoBits = (opcode & firstTwoBits) >> 30;
 	WORD opcodeResult = (opcode & opcodeBitMask) >> 24;
 
-	switch (opcode)
+
+	cout << "Opcode: " << opcodeResult << endl;
+	switch (opcodeResult)
 	{
 	case 0:
 		OPCode00(opcode);
+		break;
 	case 1:
 		OPCode01(opcode);
+		break;
 	case 2:
 		OPCode02(opcode);
+		break;
 	case 3:
 		OPCode03(opcode);
+		break;
 	case 4:
 		OPCode04(opcode);
+		break;
 	case 5:
 		OPCode05(opcode);
+		break;
 	case 6:
 		OPCode06(opcode);
+		break;
 	case 7:
 		OPCode07(opcode);
+		break;
 	case 8:
-		OPCode09(opcode);
+		OPCode08(opcode);
+		break;
 	case 9:
-		OPCode0A(opcode);
+		OPCode09(opcode);
+		break;
 	case 10:
-		OPCode0B(opcode);
+		OPCode0A(opcode);
+		break;
 	case 11:
-		OPCode0C(opcode);
+		OPCode0B(opcode);
+		break;
 	case 12:
-		OPCode0D(opcode);
+		OPCode0C(opcode);
+		break;
 	case 13:
-		OPCode0E(opcode);
+		OPCode0D(opcode);
+		break;
 	case 14:
-		OPCode0F(opcode);
+		OPCode0E(opcode);
+		break;
 	case 15:
-		OPCode11(opcode);
+		OPCode0F(opcode);
+		break;
 	case 16:
-		OPCode12(opcode);
+		OPCode10(opcode);
+		break;
 	case 17:
-		OPCode13(opcode);
+		OPCode11(opcode);
+		break;
 	case 18:
-		OPCode14(opcode);
+		OPCode12(opcode);
+		break;
 	case 19:
-		OPCode15(opcode);
+		OPCode13(opcode);
+		break;
 	case 20:
-		OPCode16(opcode);
+		OPCode14(opcode);
+		break;
 	case 21:
-		OPCode17(opcode);
+		OPCode15(opcode);
+		break;
 	case 22:
-		OPCode18(opcode);
+		OPCode16(opcode);
+		break;
 	case 23:
-		OPCode19(opcode);
+		OPCode17(opcode);
+		break;
 	case 24:
+		OPCode18(opcode);
+		break;
+	case 25:
+		OPCode19(opcode);
+		break;
+	case 26:
 		OPCode1A(opcode);
+		break;
 	}
 
 }
@@ -179,7 +212,7 @@ void CPU::OPCode03(WORD opcode) //Loads the contents of address into basereg
 	Registers[baseReg] = cpuRAM.getWord(address);
 }
 
-void CPU::OPCode04(WORD opcode)
+void CPU::OPCode04(WORD opcode) //MOV 
 {
 
 }
@@ -233,7 +266,10 @@ void CPU::OPCode08(WORD opcode)
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
 	WORD destReg = (opcode & dRegBitMask) >> 12;
 
-	Registers[destReg] = Registers[firstSReg] / Registers[secondSReg];
+	if (Registers[secondSReg != 0])
+	{
+		Registers[destReg] = Registers[firstSReg] / Registers[secondSReg];
+	}
 }
 
 void CPU::OPCode09(WORD opcode)
@@ -343,7 +379,7 @@ void CPU::OPCode11(WORD opcode)
 
 void CPU::OPCode12(WORD opcode) //Halt
 {
-	status = 0;
+	this->status = 0;
 }
 
 void CPU::OPCode13(WORD opcode) //NOP
