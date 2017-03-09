@@ -32,7 +32,7 @@ int main()
 	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 1);
 	Dispatcher dispatcher = Dispatcher(&readyQ, &pcbs);
 
-	while (!LTScheduler.AllJobsFinished()) {
+	while (!LTScheduler.AllJobsFinished()) {  //Currently gets through 21 or 22 jobs. Gets stuck in a loop then.
 		LTScheduler.LoadProcessesToRam();
 		dispatcher.Dispatch(&cpu1);
 		cpu1.BeginJob();

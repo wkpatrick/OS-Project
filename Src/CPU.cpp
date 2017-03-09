@@ -49,6 +49,7 @@ void CPU::BeginJob()
 	while (status == 1)
 	{
 		Execute(GetNextWord());
+		Registers[1] = 0;   //To ensure that Reg 1 stays 0
 		ProgramCounter++;
 	}
 
@@ -377,6 +378,22 @@ void CPU::OPCode0F(WORD opcode)
 
 void CPU::OPCode10(WORD opcode)
 {
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
+
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
+
+	if (Registers[firstSReg] < Registers[secondSReg])
+	{
+		Registers[destReg] = 1;
+	}
+	else
+	{
+		Registers[destReg] = 0;
+	}
 }
 
 void CPU::OPCode11(WORD opcode)
@@ -389,6 +406,14 @@ void CPU::OPCode11(WORD opcode)
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
+	if (Registers[baseReg] < address)
+	{
+		Registers[destReg] = 1;
+	}
+	else
+	{
+		Registers[destReg] = 0;
+	}
 }
 
 void CPU::OPCode12(WORD opcode) //Halt
