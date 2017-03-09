@@ -70,7 +70,7 @@ void CPU::Execute(WORD opcode)
 	WORD opcodeResult = (opcode & opcodeBitMask) >> 24;
 
 
-	cout << "Opcode: " << opcodeResult << endl;
+	cout << "Opcode: " << opcodeResult << " First 2 Bits: " << firstTwoBits << endl;
 	switch (opcodeResult)
 	{
 	case 0:
@@ -221,20 +221,20 @@ void CPU::OPCode04(WORD opcode) //MOV
 {
 	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
 	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	WORD dRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
 	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
 	WORD destReg = (opcode & dRegBitMask) >> 12;
 
-	Registers[destReg] = Registers[firstSReg]; //Not sure if that is the correct reg to move. 
+	Registers[firstSReg] = Registers[secondSReg]; //Not sure if that is the correct reg to move. 
 }
 
 void CPU::OPCode05(WORD opcode)
 {
 	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
 	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	WORD dRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
 	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
@@ -247,7 +247,7 @@ void CPU::OPCode06(WORD opcode)
 {
 	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
 	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	WORD dRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
 	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
@@ -260,7 +260,7 @@ void CPU::OPCode07(WORD opcode)
 {
 	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
 	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	WORD dRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
 	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
@@ -273,7 +273,7 @@ void CPU::OPCode08(WORD opcode)
 {
 	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
 	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	WORD dRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
 	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
@@ -289,7 +289,7 @@ void CPU::OPCode09(WORD opcode)
 {
 	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
 	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	WORD dRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
 	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
@@ -302,7 +302,7 @@ void CPU::OPCode0A(WORD opcode)
 {
 	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
 	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	WORD dRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
 	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
 	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
