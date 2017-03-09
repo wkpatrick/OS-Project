@@ -37,6 +37,9 @@ void CPU::BeginJob()
 
 	this->outputBufferRamADDR = pcb->outputBufferRamAddress;
 	this->outputBufferRamSize = pcb->outputBufferSize;
+
+	int inputCount = 0;
+	int outputCount = 0;
 	for (int i = 0; i < 16; i++)
 	{
 		Registers[i] = pcb->registers[i];
@@ -179,8 +182,10 @@ void CPU::OPCode01(WORD opcode)
 	WORD regOne = (opcode & regOneBitMask) >> 20;
 	WORD regTwo = (opcode & regTwoBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
-	
-	cpuRAM.setWord(address, Registers[0]);
+
+	cpuRAM.setWord(outputBufferRamADDR, Registers[0]);
+	outputBufferRamADDR++;
+
 
 }
 
@@ -214,7 +219,15 @@ void CPU::OPCode03(WORD opcode) //Loads the contents of address into basereg
 
 void CPU::OPCode04(WORD opcode) //MOV 
 {
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000011110000000000000000;
 
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
+
+	Registers[destReg] = Registers[firstSReg]; //Not sure if that is the correct reg to move. 
 }
 
 void CPU::OPCode05(WORD opcode)
@@ -350,14 +363,15 @@ void CPU::OPCode0E(WORD opcode) //Divides what into the register. TEST!
 
 void CPU::OPCode0F(WORD opcode)
 {
-	WORD regOneBitMask = 0b00000000111100000000000000000000;
-	WORD regTwoBitMask = 0b00000000000011110000000000000000;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
 	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	WORD regOne = (opcode & regOneBitMask) >> 20;
-	WORD regTwo = (opcode & regTwoBitMask) >> 16;
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
-	Registers[regOne] = cpuRAM.getWord(address);
+
+	Registers[destReg] = cpuRAM.getWord(address);
 
 }
 
