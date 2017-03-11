@@ -1,6 +1,9 @@
 #pragma once
 #include "stdafx.h"
 #include "Memory.h"
+#include <iostream>
+
+using namespace std;
 
 Memory::Memory(int cap)
 {
@@ -28,6 +31,12 @@ void Memory::addWord(WORD word)
 
 	memory[size] = word;
 	size++;
+}
+
+void Memory::setWord(int index, WORD word)
+{
+	memory[index] = word; 
+	cout << "setting RAM at index: " << index << " to word: " << word << endl;
 }
 
 void Memory::clear()

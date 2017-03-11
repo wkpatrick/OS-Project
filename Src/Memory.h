@@ -9,7 +9,7 @@ public:
 	~Memory();
 	//add a word at the next avaliable location
 	void addWord(WORD word);
-	void setWord(int index, WORD word) { memory[index] = word; }
+	void setWord(int index, WORD word);
 	WORD getWord(int index) { return memory[index]; }
 	int getSize() { return size; }
 	int getAvaliableSpace() { return capacity - size; }

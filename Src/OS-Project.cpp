@@ -22,6 +22,7 @@ int main()
 	Memory ram = Memory(1024);
 	PCBList pcbs = PCBList();
 	CPU cpu1 = CPU(&ram);
+	int count = 0;
 
 	//queue stores id of PCB
 	queue<int> readyQ;
@@ -36,6 +37,7 @@ int main()
 		LTScheduler.LoadProcessesToRam();
 		dispatcher.Dispatch(&cpu1);
 		cpu1.BeginJob();
+		count++;
 	}
 
 	int test;
