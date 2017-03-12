@@ -1,5 +1,5 @@
 #pragma once
-typedef unsigned long int projWORD;
+typedef unsigned long int WORD;
 
 class Memory
 {
@@ -8,9 +8,9 @@ public:
 	Memory();
 	~Memory();
 	//add a word at the next avaliable location
-	void addWord(projWORD word);
-	void setWord(int index, projWORD word);
-	projWORD getWord(int index) { return memory[index]; }
+	void addWord(WORD word);
+	void setWord(int index, WORD word);
+	WORD getWord(int index) { return memory[index]; }
 	int getSize() { return size; }
 	int getAvaliableSpace() { return capacity - size; }
 	void clear();
@@ -18,7 +18,7 @@ public:
 private:
 	int size = 0;
 	int capacity;
-	projWORD* memory;
+	WORD* memory;
 
 	bool isFull() { return size >= capacity; }
 };

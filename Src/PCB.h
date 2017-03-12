@@ -1,4 +1,7 @@
 #pragma once
+#include <chrono>
+
+using namespace std::chrono;
 
 enum STATUS
 {
@@ -10,8 +13,8 @@ enum STATUS
 };
 
 struct PerformanceStats {
-	time_t loadTime, beginTime, waitTime, completionTime;
-	int ioReadCount, ioWriteCount;
+	high_resolution_clock::time_point loadTime, beginTime, waitTime, completionTime;
+	int ioReadCount, ioWriteCount = 0;
 	float ramSpaceUsed, cacheSpaceUsed;
 };
 
@@ -31,7 +34,7 @@ struct PCB {
 	//EX: if input buffer if from indices 134 - 150, inputBufferRamAddress would equal 134
 	unsigned int inputBufferRamAddress;
 	unsigned int outputBufferRamAddress;
-	unsigned int tempBufferRamAddress;
+	unsigned int tempBufferRamAddress; 
 	unsigned int codeStartDiskAddress;
 	unsigned int codeStartRamAddress;
 	unsigned int dataStartDiskAddress;

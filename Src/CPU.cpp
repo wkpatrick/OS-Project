@@ -2,10 +2,11 @@
 #include "CPU.h"
 #include "PCB.h"
 #include <iostream>
-#include "windows.h"
+#include <chrono>
 
 
 using namespace std;
+using namespace std::chrono;
 
 CPU::CPU(Memory *ram)
 {
@@ -23,14 +24,13 @@ CPU::~CPU()
 }
 
 
-projWORD CPU::GetNextWord()
+WORD CPU::GetNextWord()
 {
 	return cpuRAM.getWord(ProgramCounter);
 }
 
 void CPU::BeginJob()
 {
-	time_t beginTimer;
 	//cout << "Beginning Job" << endl;
 	//cout << "PCB Count: " << pcb->pcbCount << endl;
 
@@ -42,7 +42,7 @@ void CPU::BeginJob()
 	this->outputBufferRamADDR = pcb->outputBufferRamAddress;
 	this->outputBufferRamSize = pcb->outputBufferSize;
 
-	this->pcb->stats.beginTime = GetTickCount();
+	this->pcb->stats.beginTime = high_resolution_clock::now();
 
 	int inputCount = 0;
 	int outputCount = 0;
@@ -60,10 +60,6 @@ void CPU::BeginJob()
 		Registers[1] = 0;   //To ensure that Reg 1 stays 0
 		ProgramCounter++;
 	}
-
-
-
-
 }
 
 void CPU::SetPCB(PCB * _pcb)
@@ -71,13 +67,13 @@ void CPU::SetPCB(PCB * _pcb)
 	pcb = _pcb;
 }
 
-void CPU::Execute(projWORD opcode)
+void CPU::Execute(WORD opcode)
 {
-	projWORD firstTwoBitsMask = 0b11000000000000000000000000000000;
-	projWORD opcodeBitMask = 0b00111111000000000000000000000000;
+	WORD firstTwoBitsMask = 0b11000000000000000000000000000000;
+	WORD opcodeBitMask = 0b00111111000000000000000000000000;
 
-	projWORD firstTwoBits = (opcode & firstTwoBits) >> 30;
-	projWORD opcodeResult = (opcode & opcodeBitMask) >> 24;
+	WORD firstTwoBits = (opcode & firstTwoBits) >> 30;
+	WORD opcodeResult = (opcode & opcodeBitMask) >> 24;
 
 
 	//cout << "Opcode: " << opcodeResult << " First 2 Bits: " << firstTwoBits << endl;
@@ -85,15 +81,19 @@ void CPU::Execute(projWORD opcode)
 	{
 	case 0:
 		OPCode00(opcode);
+		this->pcb->stats.ioReadCount++;
 		break;
 	case 1:
 		OPCode01(opcode);
+		this->pcb->stats.ioWriteCount++;
 		break;
 	case 2:
 		OPCode02(opcode);
+		this->pcb->stats.ioWriteCount++;
 		break;
 	case 3:
 		OPCode03(opcode);
+		this->pcb->stats.ioReadCount++;
 		break;
 	case 4:
 		OPCode04(opcode);
@@ -118,6 +118,7 @@ void CPU::Execute(projWORD opcode)
 		break;
 	case 11:
 		OPCode0B(opcode);
+		this->pcb->stats.ioReadCount++;
 		break;
 	case 12:
 		OPCode0C(opcode);
@@ -130,6 +131,7 @@ void CPU::Execute(projWORD opcode)
 		break;
 	case 15:
 		OPCode0F(opcode);
+		this->pcb->stats.ioReadCount++;
 		break;
 	case 16:
 		OPCode10(opcode);
@@ -168,46 +170,44 @@ void CPU::Execute(projWORD opcode)
 
 }
 
-void CPU::OPCode00(projWORD opcode) //RD
+void CPU::OPCode00(WORD opcode) //RD
 {
-	projWORD regOneBitMask = 0b00000000111100000000000000000000;
-	projWORD regTwoBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD regOneBitMask = 0b00000000111100000000000000000000;
+	WORD regTwoBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD regOne = (opcode & regOneBitMask) >> 20;
-	projWORD regTwo = (opcode & regTwoBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD regOne = (opcode & regOneBitMask) >> 20;
+	WORD regTwo = (opcode & regTwoBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	Registers[0] = cpuRAM.getWord(inputBufferRamADDR);
 	inputBufferRamADDR++;
 	
 }
 
-void CPU::OPCode01(projWORD opcode) //WR
+void CPU::OPCode01(WORD opcode) //WR
 {
-	projWORD regOneBitMask = 0b00000000111100000000000000000000;
-	projWORD regTwoBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD regOneBitMask = 0b00000000111100000000000000000000;
+	WORD regTwoBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD regOne = (opcode & regOneBitMask) >> 20;
-	projWORD regTwo = (opcode & regTwoBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD regOne = (opcode & regOneBitMask) >> 20;
+	WORD regTwo = (opcode & regTwoBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	cpuRAM.setWord(outputBufferRamADDR, Registers[0]);
 	outputBufferRamADDR++;
-
-
 }
 
-void CPU::OPCode02(projWORD opcode) //ST
+void CPU::OPCode02(WORD opcode) //ST
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (destReg == 0)
 	{
@@ -218,15 +218,15 @@ void CPU::OPCode02(projWORD opcode) //ST
 
 }
 
-void CPU::OPCode03(projWORD opcode) //LW
+void CPU::OPCode03(WORD opcode) //LW
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 
 	if (address == 0)
@@ -240,67 +240,67 @@ void CPU::OPCode03(projWORD opcode) //LW
 	//Registers[destReg] = cpuRAM.getWord(Registers[baseReg] + address);     Try baseReg + address????
 }
 
-void CPU::OPCode04(projWORD opcode) //MOV 
+void CPU::OPCode04(WORD opcode) //MOV 
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	Registers[firstSReg] = Registers[secondSReg];
 }
 
-void CPU::OPCode05(projWORD opcode) //ADD
+void CPU::OPCode05(WORD opcode) //ADD
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	Registers[destReg] = Registers[firstSReg] + Registers[secondSReg];
 }
 
-void CPU::OPCode06(projWORD opcode) //SUB
+void CPU::OPCode06(WORD opcode) //SUB
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	Registers[destReg] = Registers[firstSReg] - Registers[secondSReg];
 }
 
-void CPU::OPCode07(projWORD opcode) //MULT
+void CPU::OPCode07(WORD opcode) //MULT
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	Registers[destReg] = Registers[firstSReg] * Registers[secondSReg];
 }
 
-void CPU::OPCode08(projWORD opcode) //DIV
+void CPU::OPCode08(WORD opcode) //DIV
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	if (Registers[secondSReg != 0])
 	{
@@ -308,54 +308,54 @@ void CPU::OPCode08(projWORD opcode) //DIV
 	}
 }
 
-void CPU::OPCode09(projWORD opcode) //AND
+void CPU::OPCode09(WORD opcode) //AND
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	Registers[destReg] = Registers[firstSReg] & Registers[secondSReg];
 }
 
-void CPU::OPCode0A(projWORD opcode) //OR
+void CPU::OPCode0A(WORD opcode) //OR
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	Registers[destReg] = Registers[firstSReg] | Registers[secondSReg];
 }
 
-void CPU::OPCode0B(projWORD opcode) //MOVI
+void CPU::OPCode0B(WORD opcode) //MOVI
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	Registers[destReg] = cpuRAM.getWord(address);
 }
 
-void CPU::OPCode0C(projWORD opcode) //ADDI
+void CPU::OPCode0C(WORD opcode) //ADDI
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 	
 	Registers[destReg] += (cpuRAM.getWord(address) + Registers[baseReg]);
 
@@ -363,29 +363,29 @@ void CPU::OPCode0C(projWORD opcode) //ADDI
 
 }
 
-void CPU::OPCode0D(projWORD opcode) //MULTI
+void CPU::OPCode0D(WORD opcode) //MULTI
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 	//Registers[destReg] = cpuRAM.getWord(address) * Registers[baseReg];
 	Registers[destReg] *= cpuRAM.getWord(address);
 }
 
-void CPU::OPCode0E(projWORD opcode) //DIVI
+void CPU::OPCode0E(WORD opcode) //DIVI
 {
 
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 	if (Registers[baseReg] != 0)
 	{
 		//Registers[destReg] = cpuRAM.getWord(address)/Registers[baseReg];
@@ -394,29 +394,29 @@ void CPU::OPCode0E(projWORD opcode) //DIVI
 
 }
 
-void CPU::OPCode0F(projWORD opcode)  //LDI
+void CPU::OPCode0F(WORD opcode)  //LDI
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	Registers[destReg] = cpuRAM.getWord(address);
 
 }
 
-void CPU::OPCode10(projWORD opcode) //SLT
+void CPU::OPCode10(WORD opcode) //SLT
 {
-	projWORD firstSRegBitMask = 0b00000000111100000000000000000000;
-	projWORD secondSRegBitMask = 0b00000000000011110000000000000000;
-	projWORD dRegBitMask = 0b00000000000000001111000000000000;
+	WORD firstSRegBitMask = 0b00000000111100000000000000000000;
+	WORD secondSRegBitMask = 0b00000000000011110000000000000000;
+	WORD dRegBitMask = 0b00000000000000001111000000000000;
 
-	projWORD firstSReg = (opcode & firstSRegBitMask) >> 20;
-	projWORD secondSReg = (opcode & secondSRegBitMask) >> 16;
-	projWORD destReg = (opcode & dRegBitMask) >> 12;
+	WORD firstSReg = (opcode & firstSRegBitMask) >> 20;
+	WORD secondSReg = (opcode & secondSRegBitMask) >> 16;
+	WORD destReg = (opcode & dRegBitMask) >> 12;
 
 	if (Registers[firstSReg] < Registers[secondSReg])
 	{
@@ -428,15 +428,15 @@ void CPU::OPCode10(projWORD opcode) //SLT
 	}
 }
 
-void CPU::OPCode11(projWORD opcode) //SLTI
+void CPU::OPCode11(WORD opcode) //SLTI
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (Registers[baseReg] < address)
 	{
@@ -448,34 +448,33 @@ void CPU::OPCode11(projWORD opcode) //SLTI
 	}
 }
 
-void CPU::OPCode12(projWORD opcode) //Halt
+void CPU::OPCode12(WORD opcode) //Halt
 {
-	time_t endTime;
-	this->pcb->stats.completionTime = GetTickCount();
+	this->pcb->stats.completionTime = high_resolution_clock::now();
 	this->status = 0;
 	//cout << "Ending Job at time: " << this->pcb->stats.completionTime << endl;
 }
 
-void CPU::OPCode13(projWORD opcode) //NOP
+void CPU::OPCode13(WORD opcode) //NOP
 {
 }
 
-void CPU::OPCode14(projWORD opcode) //JMP
+void CPU::OPCode14(WORD opcode) //JMP
 {
-	projWORD addressBitMask = 0b00000000111111111111111111111111;
-	projWORD address = (opcode & addressBitMask);
+	WORD addressBitMask = 0b00000000111111111111111111111111;
+	WORD address = (opcode & addressBitMask);
 	ProgramCounter = address;
 }
 
-void CPU::OPCode15(projWORD opcode) //BEQ
+void CPU::OPCode15(WORD opcode) //BEQ
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (Registers[baseReg] == Registers[destReg])
 	{
@@ -483,15 +482,15 @@ void CPU::OPCode15(projWORD opcode) //BEQ
 	}
 }
 
-void CPU::OPCode16(projWORD opcode) //BNE
+void CPU::OPCode16(WORD opcode) //BNE
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (Registers[baseReg] != Registers[destReg])
 	{
@@ -499,15 +498,15 @@ void CPU::OPCode16(projWORD opcode) //BNE
 	}
 }
 
-void CPU::OPCode17(projWORD opcode) //BEZ
+void CPU::OPCode17(WORD opcode) //BEZ
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (Registers[baseReg] == 0)
 	{
@@ -515,15 +514,15 @@ void CPU::OPCode17(projWORD opcode) //BEZ
 	}
 }
 
-void CPU::OPCode18(projWORD opcode) //BNZ
+void CPU::OPCode18(WORD opcode) //BNZ
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (Registers[baseReg] != 0)
 	{
@@ -531,15 +530,15 @@ void CPU::OPCode18(projWORD opcode) //BNZ
 	}
 }
 
-void CPU::OPCode19(projWORD opcode) //BGZ
+void CPU::OPCode19(WORD opcode) //BGZ
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (Registers[baseReg] > 0)
 	{
@@ -547,15 +546,15 @@ void CPU::OPCode19(projWORD opcode) //BGZ
 	}
 }
 
-void CPU::OPCode1A(projWORD opcode) //BLZ
+void CPU::OPCode1A(WORD opcode) //BLZ
 {
-	projWORD baseRegBitMask = 0b00000000111100000000000000000000;
-	projWORD destRegBitMask = 0b00000000000011110000000000000000;
-	projWORD addressBitMask = 0b00000000000000001111111111111111;
+	WORD baseRegBitMask = 0b00000000111100000000000000000000;
+	WORD destRegBitMask = 0b00000000000011110000000000000000;
+	WORD addressBitMask = 0b00000000000000001111111111111111;
 
-	projWORD baseReg = (opcode & baseRegBitMask) >> 20;
-	projWORD destReg = (opcode & destRegBitMask) >> 16;
-	projWORD address = (opcode & addressBitMask);
+	WORD baseReg = (opcode & baseRegBitMask) >> 20;
+	WORD destReg = (opcode & destRegBitMask) >> 16;
+	WORD address = (opcode & addressBitMask);
 
 	if (Registers[baseReg] < 0)
 	{

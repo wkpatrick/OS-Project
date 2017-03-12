@@ -11,11 +11,12 @@
 #include <queue>
 #include "OS-Project.h"
 #include "Dispatcher.h"
-#include "windows.h"
-typedef unsigned long int projWORD;   //Because we use windows.h, it includes a version of WORD that is different than ours
+
+typedef unsigned long int WORD;   
 typedef unsigned char BYTE;
 
 using namespace std;
+using namespace std::chrono;
 
 int main()
 {
@@ -42,15 +43,28 @@ int main()
 	}
 
 	//print data
-	for(int i = 1; i < 31; i++)
-		cout << pcbs.getPCB(i)->stats.completionTime << endl;
+	for (int i = 1; i < 31; i++)
+	{
+		//cout << pcbs.getPCB(i)->stats.completionTime << endl;
+		high_resolution_clock::time_point beginTime = pcbs.getPCB(i)->stats.beginTime;
+		high_resolution_clock::time_point endTime = pcbs.getPCB(i)->stats.completionTime;
 
-	//time_t begin = GetTickCount();
+		high_resolution_clock::time_point loadTime = pcbs.getPCB(i)->stats.loadTime;
+		high_resolution_clock::time_point completionTime = pcbs.getPCB(i)->stats.completionTime;
+
+		auto duration = duration_cast<microseconds>(endTime - beginTime).count();
+		auto waitTime = duration_cast<microseconds>(completionTime-loadTime).count();
+		cout << "PCB ID: " << i << endl;
+		cout << "Completion Time: " << duration << endl;
+		cout << "Wait time: " << waitTime << endl;
+		cout << "IO Read Count: " << pcbs.getPCB(i)->stats.ioReadCount << endl;
+		cout << "IO Write Count " << pcbs.getPCB(i)->stats.ioWriteCount << endl;
+	}
+
+
 	int test;
 	std::cin >> test;
-	//time_t end = GetTickCount();
 
-	//cout << "Time Diff: " << (end - begin) << endl;
 	return 0;
 }
 

@@ -4,8 +4,10 @@
 #include <iostream>
 #include <algorithm>
 #include <list>
-#include "windows.h"
+#include <chrono>
+
 using namespace std;
+using namespace std::chrono;
 
 LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue<int> *rQ, int schedulingMethod)
 {
@@ -14,7 +16,6 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 	pcbs = _list;
 	readyQ = rQ;
 
-	time_t loadTime;
 
 	//FIFO
 	switch (schedulingMethod)
@@ -23,7 +24,7 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 		for (int i = 1; i < 31; i++) {
 			newQ.push(i);
 			pcbs->getPCB(i)->pcbCount = i;
-			pcbs->getPCB(i)->stats.loadTime = GetTickCount();
+			pcbs->getPCB(i)->stats.loadTime = high_resolution_clock::now();
 		}
 			
 		break;
@@ -41,7 +42,7 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 				if (find(tempL.begin(), tempL.end(), j) != tempL.end()) {
 					if (pcbs->getPCB(j)->priority == pQ.top()) {
 						pcbs->getPCB(j)->pcbCount = j;
-						pcbs->getPCB(j)->stats.loadTime = GetTickCount();
+						pcbs->getPCB(j)->stats.loadTime = high_resolution_clock::now();
 						newQ.push(j);
 						tempL.remove(j);
 						pQ.pop();
