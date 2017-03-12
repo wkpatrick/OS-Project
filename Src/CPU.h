@@ -2,22 +2,22 @@
 #include <vector>
 #include "Memory.h"
 #include "PCB.h"
-typedef unsigned long int WORD;
+typedef unsigned long int projWORD;
 typedef unsigned char BYTE;
 
 using namespace std;
 
 class CPU
 {
-	WORD Registers[16]; //16 32 bit registers, Reg[0] is the accumulator, Reg[1] is zero, and the rest are general purpose.
-	WORD ProgramCounter;
-	vector<WORD> InputBuffer;
-	vector<WORD> OutputBuffer;
-	vector<WORD> TempBuffer;
-	WORD inputBufferRamADDR;
-	WORD outputBufferRamADDR;
-	WORD inputBufferRamSize;
-	WORD outputBufferRamSize;
+	projWORD Registers[16]; //16 32 bit registers, Reg[0] is the accumulator, Reg[1] is zero, and the rest are general purpose.
+	projWORD ProgramCounter;
+	vector<projWORD> InputBuffer;
+	vector<projWORD> OutputBuffer;
+	vector<projWORD> TempBuffer;
+	projWORD inputBufferRamADDR;
+	projWORD outputBufferRamADDR;
+	projWORD inputBufferRamSize;
+	projWORD outputBufferRamSize;
 	Memory cpuRAM;
 	PCB *pcb;
 	int status; //0 for done, 1 for working
@@ -28,38 +28,38 @@ public:
 	~CPU();
 
 	int busy; // 0 is idle, 1 is busy
-	WORD GetNextWord();
+	projWORD GetNextWord();
 	void BeginJob();
-	void Execute(WORD word);
+	void Execute(projWORD word);
 	void SetPCB(PCB *_pcb);
 
 private:
-	void OPCode00(WORD opcode);
-	void OPCode01(WORD opcode);
-	void OPCode02(WORD opcode);
-	void OPCode03(WORD opcode);
-	void OPCode04(WORD opcode);
-	void OPCode05(WORD opcode);
-	void OPCode06(WORD opcode);
-	void OPCode07(WORD opcode);
-	void OPCode08(WORD opcode);
-	void OPCode09(WORD opcode);
-	void OPCode0A(WORD opcode);
-	void OPCode0B(WORD opcode);
-	void OPCode0C(WORD opcode);
-	void OPCode0D(WORD opcode);
-	void OPCode0E(WORD opcode);
-	void OPCode0F(WORD opcode);
-	void OPCode10(WORD opcode);
-	void OPCode11(WORD opcode);
-	void OPCode12(WORD opcode);
-	void OPCode13(WORD opcode);
-	void OPCode14(WORD opcode);
-	void OPCode15(WORD opcode);
-	void OPCode16(WORD opcode);
-	void OPCode17(WORD opcode);
-	void OPCode18(WORD opcode);
-	void OPCode19(WORD opcode);
-	void OPCode1A(WORD opcode);
+	void OPCode00(projWORD opcode);
+	void OPCode01(projWORD opcode);
+	void OPCode02(projWORD opcode);
+	void OPCode03(projWORD opcode);
+	void OPCode04(projWORD opcode);
+	void OPCode05(projWORD opcode);
+	void OPCode06(projWORD opcode);
+	void OPCode07(projWORD opcode);
+	void OPCode08(projWORD opcode);
+	void OPCode09(projWORD opcode);
+	void OPCode0A(projWORD opcode);
+	void OPCode0B(projWORD opcode);
+	void OPCode0C(projWORD opcode);
+	void OPCode0D(projWORD opcode);
+	void OPCode0E(projWORD opcode);
+	void OPCode0F(projWORD opcode);
+	void OPCode10(projWORD opcode);
+	void OPCode11(projWORD opcode);
+	void OPCode12(projWORD opcode);
+	void OPCode13(projWORD opcode);
+	void OPCode14(projWORD opcode);
+	void OPCode15(projWORD opcode);
+	void OPCode16(projWORD opcode);
+	void OPCode17(projWORD opcode);
+	void OPCode18(projWORD opcode);
+	void OPCode19(projWORD opcode);
+	void OPCode1A(projWORD opcode);
 };
 

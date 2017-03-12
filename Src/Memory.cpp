@@ -8,14 +8,14 @@ using namespace std;
 Memory::Memory(int cap)
 {
 	capacity = cap;
-	memory = new WORD[capacity];
+	memory = new projWORD[capacity];
 	clear();
 }
 
 Memory::Memory()
 {
 	capacity = 1024;
-	memory = new WORD[capacity];
+	memory = new projWORD[capacity];
 	clear();
 }
 
@@ -24,7 +24,7 @@ Memory::~Memory()
 	delete[] memory;
 }
 
-void Memory::addWord(WORD word)
+void Memory::addWord(projWORD word)
 {
 	if (isFull())
 		return;
@@ -33,7 +33,7 @@ void Memory::addWord(WORD word)
 	size++;
 }
 
-void Memory::setWord(int index, WORD word)
+void Memory::setWord(int index, projWORD word)
 {
 	memory[index] = word; 
 	cout << "setting RAM at index: " << index << " to word: " << word << endl;

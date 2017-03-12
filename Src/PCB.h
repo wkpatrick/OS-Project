@@ -10,7 +10,7 @@ enum STATUS
 };
 
 struct PerformanceStats {
-	time_t beginTime, waitTime, avgWaitTime, completionTime, avgCompletionTime;
+	time_t loadTime, beginTime, waitTime, avgWaitTime, completionTime, avgCompletionTime;
 	int ioReadCount, ioWriteCount;
 	int ramSpaceUsed, cacheSpaceUsed;
 };
@@ -18,6 +18,7 @@ struct PerformanceStats {
 struct PCB {
 	unsigned int cpuID;
 	unsigned int pc;	//program counter
+	unsigned int pcbCount;
 	int status;	//STATUS enum used for this
 	unsigned int codeSize;
 	int priority;	// high # = high priority

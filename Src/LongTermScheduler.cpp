@@ -4,6 +4,7 @@
 #include <iostream>
 #include <algorithm>
 #include <list>
+#include "windows.h"
 using namespace std;
 
 LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue<int> *rQ, int schedulingMethod)
@@ -12,6 +13,8 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 	ram = r;
 	pcbs = _list;
 	readyQ = rQ;
+
+	time_t loadTime;
 
 	//FIFO
 	switch (schedulingMethod)
@@ -33,6 +36,8 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 			for (int j = 1; j < 31; j++) {
 				if (find(tempL.begin(), tempL.end(), j) != tempL.end()) {
 					if (pcbs->getPCB(j)->priority == pQ.top()) {
+						pcbs->getPCB(j)->pcbCount = j;
+						pcbs->getPCB(j)->stats.loadTime = GetTickCount();
 						newQ.push(j);
 						tempL.remove(j);
 						pQ.pop();

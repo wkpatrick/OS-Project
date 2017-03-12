@@ -11,7 +11,8 @@
 #include <queue>
 #include "OS-Project.h"
 #include "Dispatcher.h"
-typedef unsigned long int WORD;
+#include "windows.h"
+typedef unsigned long int projWORD;   //Because we use windows.h, it includes a version of WORD that is different than ours
 typedef unsigned char BYTE;
 
 using namespace std;
@@ -33,15 +34,19 @@ int main()
 	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 1);
 	Dispatcher dispatcher = Dispatcher(&readyQ, &pcbs);
 
-	while (!LTScheduler.AllJobsFinished()) {  //Currently gets through 21 or 22 jobs. Gets stuck in a loop then.
+	while (!LTScheduler.AllJobsFinished()) {  
 		LTScheduler.LoadProcessesToRam();
 		dispatcher.Dispatch(&cpu1);
 		cpu1.BeginJob();
 		count++;
 	}
 
+	//time_t begin = GetTickCount();
 	int test;
 	std::cin >> test;
+	//time_t end = GetTickCount();
+
+	//cout << "Time Diff: " << (end - begin) << endl;
 	return 0;
 }
 
