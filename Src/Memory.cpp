@@ -36,7 +36,7 @@ void Memory::addWord(projWORD word)
 void Memory::setWord(int index, projWORD word)
 {
 	memory[index] = word; 
-	cout << "setting RAM at index: " << index << " to word: " << word << endl;
+	//cout << "setting RAM at index: " << index << " to word: " << word << endl;
 }
 
 void Memory::clear()

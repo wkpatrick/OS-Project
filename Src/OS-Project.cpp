@@ -31,7 +31,7 @@ int main()
 	Loader loader = Loader(&disk, &pcbs);
 	loader.load_file();
 
-	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 1);
+	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 0);
 	Dispatcher dispatcher = Dispatcher(&readyQ, &pcbs);
 
 	while (!LTScheduler.AllJobsFinished()) {  
@@ -40,6 +40,10 @@ int main()
 		cpu1.BeginJob();
 		count++;
 	}
+
+	//print data
+	for(int i = 1; i < 31; i++)
+		cout << pcbs.getPCB(i)->stats.completionTime << endl;
 
 	//time_t begin = GetTickCount();
 	int test;

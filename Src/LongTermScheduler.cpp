@@ -20,8 +20,12 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 	switch (schedulingMethod)
 	{
 	case 0://FIFO
-		for (int i = 1; i < 31; i++)
+		for (int i = 1; i < 31; i++) {
 			newQ.push(i);
+			pcbs->getPCB(i)->pcbCount = i;
+			pcbs->getPCB(i)->stats.loadTime = GetTickCount();
+		}
+			
 		break;
 	case 1://Priority
 		priority_queue<int> pQ = priority_queue<int>();

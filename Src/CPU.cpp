@@ -31,8 +31,8 @@ projWORD CPU::GetNextWord()
 void CPU::BeginJob()
 {
 	time_t beginTimer;
-	cout << "Beginning Job" << endl;
-	cout << "PCB Count: " << pcb->pcbCount << endl;
+	//cout << "Beginning Job" << endl;
+	//cout << "PCB Count: " << pcb->pcbCount << endl;
 
 	this->ProgramCounter = pcb->codeStartRamAddress;
 
@@ -51,7 +51,7 @@ void CPU::BeginJob()
 		Registers[i] = pcb->registers[i];
 	}
 
-	cout << "Beginning Job at time: " << this->pcb->stats.beginTime << endl;
+	//cout << "Beginning Job at time: " << this->pcb->stats.beginTime << endl;
 
 	status = 1;
 	while (status == 1)
@@ -453,7 +453,7 @@ void CPU::OPCode12(projWORD opcode) //Halt
 	time_t endTime;
 	this->pcb->stats.completionTime = GetTickCount();
 	this->status = 0;
-	cout << "Ending Job at time: " << this->pcb->stats.completionTime << endl;
+	//cout << "Ending Job at time: " << this->pcb->stats.completionTime << endl;
 }
 
 void CPU::OPCode13(projWORD opcode) //NOP

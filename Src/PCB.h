@@ -10,9 +10,9 @@ enum STATUS
 };
 
 struct PerformanceStats {
-	time_t loadTime, beginTime, waitTime, avgWaitTime, completionTime, avgCompletionTime;
+	time_t loadTime, beginTime, waitTime, completionTime;
 	int ioReadCount, ioWriteCount;
-	int ramSpaceUsed, cacheSpaceUsed;
+	float ramSpaceUsed, cacheSpaceUsed;
 };
 
 struct PCB {
