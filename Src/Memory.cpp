@@ -36,7 +36,6 @@ void Memory::addWord(WORD word)
 void Memory::setWord(int index, WORD word)
 {
 	memory[index] = word; 
-	//cout << "setting RAM at index: " << index << " to word: " << word << endl;
 }
 
 void Memory::clear()

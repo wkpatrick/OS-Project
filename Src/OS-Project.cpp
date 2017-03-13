@@ -8,10 +8,10 @@
 #include "LongTermScheduler.h"
 #include "Loader.h"
 #include <iostream>
-#include <queue>
 #include "OS-Project.h"
 #include "Dispatcher.h"
 #include <thread>
+#include <mutex>
 
 typedef unsigned long int WORD;   
 typedef unsigned char BYTE;
@@ -19,9 +19,12 @@ typedef unsigned char BYTE;
 using namespace std;
 using namespace std::chrono;
 
-void runCPU(CPU cpu)
+mutex ramLock;
+mutex readyQDispatchLock;
+
+void runCPU(CPU cpu, int id)
 {
-	cpu.BeginJob();
+	cpu.BeginJob(id);
 }
 
 int main()
@@ -29,7 +32,14 @@ int main()
 	Memory disk = Memory(2048);
 	Memory ram = Memory(1024);
 	PCBList pcbs = PCBList();
+
 	CPU cpu1 = CPU(&ram);
+	CPU cpu2 = CPU(&ram);
+	CPU cpu3 = CPU(&ram);
+	CPU cpu4 = CPU(&ram);
+
+
+
 	int count = 0;
 
 	//queue stores id of PCB
@@ -43,10 +53,55 @@ int main()
 
 	while (!LTScheduler.AllJobsFinished()) {  
 		LTScheduler.LoadProcessesToRam();
-		dispatcher.Dispatch(&cpu1);
 
-		thread cpuThread(runCPU, cpu1);
-		cpuThread.join();
+		ramLock.lock();
+		dispatcher.Dispatch(&cpu1);
+		dispatcher.Dispatch(&cpu2);
+		dispatcher.Dispatch(&cpu3);
+		dispatcher.Dispatch(&cpu4);
+
+
+
+		thread cpuThread1(runCPU, cpu1, 1);
+		thread cpuThread2(runCPU, cpu2, 2);
+		thread cpuThread3(runCPU, cpu3, 3);
+		thread cpuThread4(runCPU, cpu4, 4);
+
+		if (cpuThread1.joinable())
+		{
+			cpuThread1.join();
+
+		}
+		if (cpuThread2.joinable())
+		{
+			cpuThread2.join();
+		}
+
+		if (cpuThread3.joinable())
+		{
+			cpuThread3.join();
+		}
+
+		if (cpuThread4.joinable())
+		{
+			cpuThread4.join();
+		}
+
+		ramLock.unlock();
+		Memory cacheOne = cpu1.getCache();
+		Memory cacheTwo = cpu2.getCache();
+		Memory cacheThree = cpu3.getCache();
+		Memory cacheFour = cpu4.getCache();
+
+
+		ramLock.lock();
+		for (int i = cpu1.getCacheStart(); i < (cpu1.getCacheStart() + cpu1.getCacheSize()); i++)
+		{
+			//ram.setWord(i, cacheOne.getWord(i - cpu1.getCacheStart()));
+		}
+		ramLock.unlock();
+
+		//dispatcher.Dispatch(&cpu1);
 		//cpu1.BeginJob();
 		count++;
 	}
@@ -68,6 +123,7 @@ int main()
 		cout << "Wait time: " << waitTime << endl;
 		cout << "IO Read Count: " << pcbs.getPCB(i)->stats.ioReadCount << endl;
 		cout << "IO Write Count " << pcbs.getPCB(i)->stats.ioWriteCount << endl;
+		cout << "CPU ID: " << pcbs.getPCB(i)->cpuID << endl;
 	}
 
 
