@@ -38,6 +38,11 @@ void Memory::setWord(int index, WORD word)
 	memory[index] = word; 
 }
 
+WORD Memory::getWord(int index)
+{
+	return memory[index]; 
+}
+
 void Memory::clear()
 {
 	for (int i = 0; i < capacity; i++)
