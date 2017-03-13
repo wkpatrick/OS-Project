@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <list>
 #include <chrono>
+#include <fstream>
 
 using namespace std;
 using namespace std::chrono;
@@ -67,7 +68,17 @@ void LongTermScheduler::LoadProcessesToRam()
 		return;
 
 	if (readyQ->size() == 0) {
+		//put ram contents into file
+		//ofstream myfile;
+		//myfile.open("RamDump.txt");
+		//for (int i = 0; i < ram->getSize(); i++) {
+		//	myfile << ram->getWord(i) << "\n";
+		//}
+		//myfile.close();
+
+
 		ram->clear();
+
 		while (readyQ->size() < 10) {
 			PCB *process = pcbs->getPCB(newQ.front());
 

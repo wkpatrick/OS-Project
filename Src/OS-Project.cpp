@@ -48,7 +48,7 @@ int main()
 	Loader loader = Loader(&disk, &pcbs);
 	loader.load_file();
 
-	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 0);
+	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 1);
 	Dispatcher dispatcher = Dispatcher(&readyQ, &pcbs);
 
 	while (!LTScheduler.AllJobsFinished()) {  
@@ -119,11 +119,12 @@ int main()
 		auto duration = duration_cast<microseconds>(endTime - beginTime).count();
 		auto waitTime = duration_cast<microseconds>(completionTime-loadTime).count();
 		cout << "PCB ID: " << i << endl;
-		cout << "Completion Time: " << duration << endl;
+
 		cout << "Wait time: " << waitTime << endl;
-		cout << "IO Read Count: " << pcbs.getPCB(i)->stats.ioReadCount << endl;
-		cout << "IO Write Count " << pcbs.getPCB(i)->stats.ioWriteCount << endl;
-		cout << "CPU ID: " << pcbs.getPCB(i)->cpuID << endl;
+		cout << "Completion Time: " << duration << endl;
+		//cout << "IO Read Count: " << pcbs.getPCB(i)->stats.ioReadCount << endl;
+		//cout << "IO Write Count " << pcbs.getPCB(i)->stats.ioWriteCount << endl;
+		cout << "CPU ID: " << pcbs.getPCB(i)->cpuID << endl << endl;
 	}
 
 
