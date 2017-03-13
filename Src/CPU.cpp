@@ -20,7 +20,7 @@ CPU::CPU(Memory *ram)
 
 CPU::~CPU()
 {
-	delete[] Registers;
+	//delete [] Registers;
 }
 
 

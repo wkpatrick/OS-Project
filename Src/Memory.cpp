@@ -21,7 +21,7 @@ Memory::Memory()
 
 Memory::~Memory()
 {
-	delete[] memory;
+	//delete[] memory;
 }
 
 void Memory::addWord(WORD word)

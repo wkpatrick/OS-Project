@@ -11,12 +11,18 @@
 #include <queue>
 #include "OS-Project.h"
 #include "Dispatcher.h"
+#include <thread>
 
 typedef unsigned long int WORD;   
 typedef unsigned char BYTE;
 
 using namespace std;
 using namespace std::chrono;
+
+void runCPU(CPU cpu)
+{
+	cpu.BeginJob();
+}
 
 int main()
 {
@@ -38,7 +44,10 @@ int main()
 	while (!LTScheduler.AllJobsFinished()) {  
 		LTScheduler.LoadProcessesToRam();
 		dispatcher.Dispatch(&cpu1);
-		cpu1.BeginJob();
+
+		thread cpuThread(runCPU, cpu1);
+		cpuThread.join();
+		//cpu1.BeginJob();
 		count++;
 	}
 
