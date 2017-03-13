@@ -250,20 +250,16 @@ void CPU::OPCode02(WORD opcode) //ST
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
-	if (destReg == 0)
-	{
-		cout << "Dest Reg is zero!" << endl;
-	}
 
-
-	if (address > (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address < (this->pcb->pc));
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
 	{
 		cpuRAM.setWord(address, Registers[baseReg]);
 	}
-	if(address < (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address > (this->pcb->pc))
+	else
 	{
-		cout << "Halt" << endl;  //Never happens
+		cache.setWord(address, Registers[baseReg]);
 	}
+
 }
 
 void CPU::OPCode03(WORD opcode) //LW
@@ -283,7 +279,7 @@ void CPU::OPCode03(WORD opcode) //LW
 	}
 	else
 	{
-		Registers[destReg] = cpuRAM.getWord(address);  //Never Happens
+		//Registers[destReg] = cpuRAM.getWord(address);  //Never Happens
 	}
 }
 
@@ -391,12 +387,11 @@ void CPU::OPCode0B(WORD opcode) //MOVI
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
-
-	if (address > (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address < (this->pcb->pc));
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
 	{
 		Registers[destReg] = cpuRAM.getWord(address);
 	}
-	if (address < (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address >(this->pcb->pc))
+	else
 	{
 		Registers[destReg] = cache.getWord(address - this->pcb->codeStartRamAddress);
 	}
@@ -413,11 +408,11 @@ void CPU::OPCode0C(WORD opcode) //ADDI
 	WORD address = (opcode & addressBitMask);
 	
 
-	if (address > (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address < (this->pcb->pc));
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
 	{
 		Registers[destReg] += (cpuRAM.getWord(address) + Registers[baseReg]);
 	}
-	if (address < (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address >(this->pcb->pc))
+	else
 	{
 		Registers[destReg] += (cache.getWord(address - this->pcb->codeStartRamAddress)) + Registers[baseReg];
 	}
@@ -437,11 +432,11 @@ void CPU::OPCode0D(WORD opcode) //MULTI
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
-	if (address > (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address < (this->pcb->pc))
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
 	{
 		Registers[destReg] *= cpuRAM.getWord(address);
 	}
-	if (address < (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address >(this->pcb->pc))
+	else
 	{
 		Registers[destReg] *= (cache.getWord(address - this->pcb->codeStartRamAddress));
 	}
@@ -460,11 +455,11 @@ void CPU::OPCode0E(WORD opcode) //DIVI
 	if (Registers[baseReg] != 0)
 	{
 
-		if (address > (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address < (this->pcb->pc));
+		if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
 		{
 			Registers[destReg] = Registers[destReg]/cpuRAM.getWord(address);
 		}
-		if (address < (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address >(this->pcb->pc))
+		else
 		{
 			Registers[destReg] = Registers[destReg] / cache.getWord(address - this->pcb->codeStartRamAddress);
 		}
@@ -483,11 +478,11 @@ void CPU::OPCode0F(WORD opcode)  //LDI
 	WORD address = (opcode & addressBitMask);
 
 	//Registers[destReg] = cpuRAM.getWord(address);
-	if (address > (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address < (this->pcb->pc));
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
 	{
 		Registers[destReg] = cpuRAM.getWord(address);
 	}
-	if (address < (this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize) && address >(this->pcb->pc))
+	else
 	{
 		Registers[destReg] = cache.getWord(address - this->pcb->codeStartRamAddress);
 	}
