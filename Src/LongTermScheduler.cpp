@@ -17,10 +17,7 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 	pcbs = _list;
 	readyQ = rQ;
 
-
-	//FIFO
-	switch (schedulingMethod)
-	{
+	switch (schedulingMethod){
 	case 0://FIFO
 		for (int i = 1; i < 31; i++) {
 			newQ.push(i);
@@ -30,6 +27,7 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 			
 		break;
 	case 1://Priority
+	{
 		priority_queue<int> pQ = priority_queue<int>();
 		for (int i = 1; i < 31; i++)
 			pQ.push(pcbs->getPCB(i)->priority);
@@ -52,6 +50,32 @@ LongTermScheduler::LongTermScheduler(Memory *r, Memory *d, PCBList *_list, queue
 			}
 		}
 		break;
+	}
+	case 2://SJF
+	{
+		priority_queue<int> pQ = priority_queue<int>();
+		for (int i = 1; i < 31; i++)
+			pQ.push(pcbs->getPCB(i)->codeSize);
+
+		list<int> tmpL;
+		for (int i = 1; i < 31; i++)
+			tmpL.push_front(i);
+
+		for (int i = 1; i < 31; i++) {
+			for (int j = 1; j < 31; j++) {
+				if (find(tmpL.begin(), tmpL.end(), j) != tmpL.end()) {
+					if (pcbs->getPCB(j)->codeSize == pQ.top()) {
+						pcbs->getPCB(j)->pcbCount = j;
+						pcbs->getPCB(j)->stats.loadTime = high_resolution_clock::now();
+						newQ.push(j);
+						tmpL.remove(j);
+						pQ.pop();
+					}
+				}
+			}
+		}
+		break;
+	}
 	}
 
 	

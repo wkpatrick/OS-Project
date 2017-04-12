@@ -48,7 +48,7 @@ int main()
 	Loader loader = Loader(&disk, &pcbs);
 	loader.load_file();
 
-	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 1);
+	LongTermScheduler LTScheduler = LongTermScheduler(&ram, &disk, &pcbs, &readyQ, 2);
 	Dispatcher dispatcher = Dispatcher(&readyQ, &pcbs);
 
 	while (!LTScheduler.AllJobsFinished()) {  
