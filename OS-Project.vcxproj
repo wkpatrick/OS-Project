@@ -149,10 +149,13 @@
   <ItemGroup>
     <ClCompile Include="Src\CPU.cpp" />
     <ClCompile Include="Src\Dispatcher.cpp" />
+    <ClCompile Include="Src\Frame.cpp" />
     <ClCompile Include="Src\Loader.cpp" />
     <ClCompile Include="Src\LongTermScheduler.cpp" />
     <ClCompile Include="Src\Memory.cpp" />
     <ClCompile Include="Src\OS-Project.cpp" />
+    <ClCompile Include="Src\Page.cpp" />
+    <ClCompile Include="Src\PageTable.cpp" />
     <ClCompile Include="Src\PCB.cpp" />
     <ClCompile Include="Src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -163,10 +166,13 @@
   <ItemGroup>
     <ClInclude Include="Src\CPU.h" />
     <ClInclude Include="Src\Dispatcher.h" />
+    <ClInclude Include="Src\Frame.h" />
     <ClInclude Include="Src\Loader.h" />
     <ClInclude Include="Src\LongTermScheduler.h" />
     <ClInclude Include="Src\Memory.h" />
     <ClInclude Include="Src\OS-Project.h" />
+    <ClInclude Include="Src\Page.h" />
+    <ClInclude Include="Src\PageTable.h" />
     <ClInclude Include="Src\PCB.h" />
     <ClInclude Include="Src\stdafx.h" />
     <ClInclude Include="Src\targetver.h" />

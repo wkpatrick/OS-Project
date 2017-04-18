@@ -12,6 +12,7 @@ public:
 	void setWord(int index, WORD word);
 	WORD getWord(int index);
 	int getSize() { return size; }
+	int getCapacity() { return capacity; }
 	int getAvaliableSpace() { return capacity - size; }
 	void clear();
 

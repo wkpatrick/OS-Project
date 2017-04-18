@@ -16,6 +16,7 @@ struct PerformanceStats {
 	high_resolution_clock::time_point loadTime, beginTime, waitTime, completionTime;
 	int ioReadCount, ioWriteCount = 0;
 	int cacheWriteCount = 0;
+	int pageFaults = 0;
 	float ramSpaceUsed, cacheSpaceUsed;
 };
 

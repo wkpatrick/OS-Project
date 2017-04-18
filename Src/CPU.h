@@ -2,6 +2,7 @@
 #include <vector>
 #include "Memory.h"
 #include "PCB.h"
+#include "PageTable.h"
 typedef unsigned long int WORD;
 typedef unsigned char BYTE;
 
