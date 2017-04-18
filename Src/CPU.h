@@ -22,6 +22,7 @@ class CPU
 	int status; //0 for done, 1 for working
 	int cacheStart;
 	vector<WORD> changes; //Stores the addr of the cache changes
+	PageTable cpuTable;
 
 public:
 	CPU();

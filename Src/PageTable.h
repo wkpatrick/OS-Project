@@ -11,6 +11,7 @@ class PageTable
 {
 public:
 	PageTable(PCB *pcb);
+	PageTable();
 	~PageTable();
 
 	void loadIntoFrames(Memory mem);

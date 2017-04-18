@@ -124,6 +124,7 @@ int main()
 		cout << "Completion Time: " << duration << endl;
 		//cout << "IO Read Count: " << pcbs.getPCB(i)->stats.ioReadCount << endl;
 		//cout << "IO Write Count " << pcbs.getPCB(i)->stats.ioWriteCount << endl;
+		cout << "Page Faults: " << pcbs.getPCB(i)->stats.pageFaults << endl;
 		cout << "CPU ID: " << pcbs.getPCB(i)->cpuID << endl << endl;
 	}
 
