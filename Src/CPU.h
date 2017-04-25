@@ -23,6 +23,7 @@ class CPU
 	int cacheStart;
 	vector<WORD> changes; //Stores the addr of the cache changes
 	PageTable cpuTable;
+	PageTable cacheTable;
 
 public:
 	CPU();

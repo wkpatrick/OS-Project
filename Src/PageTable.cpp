@@ -82,6 +82,32 @@ WORD PageTable::getWord(int index)
 	}
 }
 
+void PageTable::setWord(int index, WORD set)
+{
+	int reqPageNum = index / 4;
+	int reqLine = index % 4;
+
+	if (this->lastUsed.size() == 0)
+	{
+		this->lastUsed.push_front(reqPageNum);
+	}
+
+	else if (isInLastUsed(reqPageNum))
+	{
+		this->reorderLastUsed(reqPageNum);
+	}
+
+	else
+	{
+		this->pcb->stats.pageFaults++;
+
+		this->lastUsed.push_front(reqPageNum);
+		this->lastUsed.resize(4);
+	}
+
+	this->pages[reqPageNum].contents[reqLine] == set;
+}
+
 bool PageTable::isInLastUsed(int pageNum)
 {
 	if (this->lastUsed.size() == 0)

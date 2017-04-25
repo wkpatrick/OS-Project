@@ -17,6 +17,7 @@ void Dispatcher::Dispatch(CPU *cpuToSet)
 	if (readyQ->empty())
 		return;
 
+	//Have it pull off the waiting queue before readyQ?
 	cpuToSet->SetPCB(pcbs->getPCB(readyQ->front()));
 	readyQ->pop();
 }

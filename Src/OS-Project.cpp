@@ -22,10 +22,11 @@ using namespace std::chrono;
 mutex ramLock;
 mutex readyQDispatchLock;
 
-void runCPU(CPU cpu, int id)
+void runCPU(CPU *cpu, int id)
 {
-	cpu.BeginJob(id);
+	cpu->BeginJob(id);
 }
+
 
 int main()
 {
@@ -37,8 +38,6 @@ int main()
 	CPU cpu2 = CPU(&ram);
 	CPU cpu3 = CPU(&ram);
 	CPU cpu4 = CPU(&ram);
-
-
 
 	int count = 0;
 
@@ -61,16 +60,20 @@ int main()
 		dispatcher.Dispatch(&cpu4);
 
 
+		thread cpuThread1(runCPU, &cpu1, 1);
+		thread cpuThread2(runCPU, &cpu2, 2);
+		thread cpuThread3(runCPU, &cpu3, 3);
+		thread cpuThread4(runCPU, &cpu4, 4);
 
-		thread cpuThread1(runCPU, cpu1, 1);
-		thread cpuThread2(runCPU, cpu2, 2);
-		thread cpuThread3(runCPU, cpu3, 3);
-		thread cpuThread4(runCPU, cpu4, 4);
+		Memory cacheOne = cpu1.getCache();
+		Memory cacheTwo = cpu2.getCache();
+		Memory cacheThree = cpu3.getCache();
+		Memory cacheFour = cpu4.getCache();
+
 
 		if (cpuThread1.joinable())
 		{
 			cpuThread1.join();
-
 		}
 		if (cpuThread2.joinable())
 		{
@@ -88,28 +91,42 @@ int main()
 		}
 
 		ramLock.unlock();
-		Memory cacheOne = cpu1.getCache();
-		Memory cacheTwo = cpu2.getCache();
-		Memory cacheThree = cpu3.getCache();
-		Memory cacheFour = cpu4.getCache();
-
-
 		ramLock.lock();
+
 		for (int i = cpu1.getCacheStart(); i < (cpu1.getCacheStart() + cpu1.getCacheSize()); i++)
 		{
-			//ram.setWord(i, cacheOne.getWord(i - cpu1.getCacheStart()));
+			cacheOne = cpu1.getCache();
+			ram.setWord(i, cacheOne.getWord(i - cpu1.getCacheStart()));
+		}
+		for (int i = cpu2.getCacheStart(); i < (cpu2.getCacheStart() + cpu2.getCacheSize()); i++)
+		{
+			cacheTwo = cpu2.getCache();
+			ram.setWord(i, cacheTwo.getWord(i - cpu2.getCacheStart()));
+		}
+		for (int i = cpu3.getCacheStart(); i < (cpu3.getCacheStart() + cpu3.getCacheSize()); i++)
+		{
+			cacheThree = cpu3.getCache();
+			ram.setWord(i, cacheThree.getWord(i - cpu3.getCacheStart()));
+		}
+		for (int i = cpu4.getCacheStart(); i < (cpu4.getCacheStart() + cpu4.getCacheSize()); i++)
+		{
+			cacheFour = cpu4.getCache();
+			ram.setWord(i, cacheFour.getWord(i - cpu4.getCacheStart()));
 		}
 		ramLock.unlock();
+
+
 
 		//dispatcher.Dispatch(&cpu1);
 		//cpu1.BeginJob();
 		count++;
 	}
 
+
+
 	//print data
 	for (int i = 1; i < 31; i++)
 	{
-		//cout << pcbs.getPCB(i)->stats.completionTime << endl;
 		high_resolution_clock::time_point beginTime = pcbs.getPCB(i)->stats.beginTime;
 		high_resolution_clock::time_point endTime = pcbs.getPCB(i)->stats.completionTime;
 
@@ -128,6 +145,10 @@ int main()
 		cout << "CPU ID: " << pcbs.getPCB(i)->cpuID << endl << endl;
 	}
 
+	for (int i = 0; i < 1000; i++)
+	{
+		cout << ram.getWord(i) << endl;
+	}
 
 	int test;
 	std::cin >> test;
