@@ -21,7 +21,7 @@ PageTable::~PageTable()
 
 void PageTable::loadIntoFrames(Memory mem)
 {
-	this->numOfPages = mem.getCapacity() / 4;
+	this->numOfPages = mem.getCapacity() / 4 +1;
 	this->pages = new Page[numOfPages];
 
 	int addr = 0;
@@ -32,6 +32,12 @@ void PageTable::loadIntoFrames(Memory mem)
 			pages[i].contents[j] = mem.getWord((i * 4) + j);
 		}
 	}
+
+	//Pre-load the first 4 pages into the page table
+	this->lastUsed.push_back(1);
+	this->lastUsed.push_back(2);
+	this->lastUsed.push_back(3);
+	this->lastUsed.push_back(4);
 }
 
 void PageTable::reorderLastUsed(int pageNum)

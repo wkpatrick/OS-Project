@@ -80,7 +80,7 @@ void CPU::BeginJob(int id)
 	{
 		//WORD input = cpuRAM.getWord(pcb->codeStartRamAddress + i);
 		WORD input = cpuTable.getWord(pcb->codeStartRamAddress + i);
-		cache.setWord(i, input);
+		cacheTable.setWord(i, input);
 	}
 
 	cacheTable.loadIntoFrames(cache);  //Put down here so we dont get all sorts of page faults.
@@ -104,7 +104,7 @@ void CPU::BeginJob(int id)
 	for (WORD i : changes)
 	{
 		WORD addr = i;
-		cpuRAM.setWord(i + this->pcb->codeStartRamAddress, cache.getWord(i));
+		cpuRAM.setWord(i + this->pcb->codeStartRamAddress, cacheTable.getWord(i));
 	}
 }
 
