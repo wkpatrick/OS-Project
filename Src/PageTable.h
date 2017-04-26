@@ -20,6 +20,7 @@ public:
 	WORD getWord(int index);
 	WORD getNoPageWord(int index);
 	void setWord(int index, WORD set);
+	void setNoPageWord(int index, WORD set);
 	bool isInLastUsed(int pageNum);
 
 	deque<int> lastUsed;

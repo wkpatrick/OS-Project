@@ -123,6 +123,13 @@ void PageTable::setWord(int index, WORD set)
 	//this->pages.at(reqPageNum).contents[reqLine] = set;
 }
 
+void PageTable::setNoPageWord(int index, WORD set)
+{
+	int reqPageNum = index / 4;
+	int reqLine = index % 4;
+	this->pages[reqPageNum].contents[reqLine] = set;
+}
+
 bool PageTable::isInLastUsed(int pageNum)
 {
 	if (this->lastUsed.size() == 0)

@@ -80,7 +80,7 @@ void CPU::BeginJob(int id)
 	for (int i = 0; i < cacheSize; i++)   //Set up the cache.
 	{
 		//WORD input = cpuRAM.getWord(pcb->codeStartRamAddress + i);
-		WORD input = cpuTable.getWord(pcb->codeStartRamAddress + i);
+		WORD input = cpuTable.getNoPageWord(pcb->codeStartRamAddress + i);
 		cacheTable.setWord(i, input);
 	}
 
