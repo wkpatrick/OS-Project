@@ -12,6 +12,9 @@
 #include "Dispatcher.h"
 #include <thread>
 #include <mutex>
+#include <vector>
+#include <iostream>
+#include <fstream>
 
 typedef unsigned long int WORD;   
 typedef unsigned char BYTE;
@@ -33,6 +36,7 @@ int main()
 	Memory disk = Memory(2048);
 	Memory ram = Memory(1024);
 	PCBList pcbs = PCBList();
+	vector<WORD> history;
 
 	CPU cpu1 = CPU(&ram);
 	CPU cpu2 = CPU(&ram);
@@ -87,16 +91,28 @@ int main()
 		ramLock.unlock();
 		ramLock.lock();
 
-		cout << "test" << endl;
+
 
 		PageTable cacheOne = cpu1.getCacheTable();
 		PageTable cacheTwo = cpu2.getCacheTable();
 		PageTable cacheThree = cpu3.getCacheTable();
 		PageTable cacheFour = cpu4.getCacheTable();
 
-		for (int i = cpu1.inputBufferRamSize; i < cpu1.getCacheSize(); i++)
+		for (int i = 0; i < cpu1.getCacheSize(); i++)
 		{
-			cout << cacheOne.getWord(i) << endl;
+			history.push_back(cacheOne.getNoPageWord(i));
+		}
+		for (int i = 0; i < cpu2.getCacheSize(); i++)
+		{
+			history.push_back(cacheTwo.getNoPageWord(i));
+		}
+		for (int i = 0; i < cpu3.getCacheSize(); i++)
+		{
+			history.push_back(cacheThree.getNoPageWord(i));
+		}
+		for (int i = 0; i < cpu4.getCacheSize(); i++)
+		{
+			history.push_back(cacheFour.getNoPageWord(i));
 		}
 
 		ramLock.unlock();
@@ -108,7 +124,12 @@ int main()
 		count++;
 	}
 
-
+	ofstream myfile;
+	myfile.open("RamDumpNew.txt");
+	for (int i = 0; i < history.size(); i++) {
+		myfile << "0x" << hex << history.at(i) << "\n";
+	}
+	myfile.close();
 
 	//print data
 	for (int i = 1; i < 31; i++)

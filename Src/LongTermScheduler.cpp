@@ -93,12 +93,16 @@ void LongTermScheduler::LoadProcessesToRam()
 
 	if (readyQ->size() == 0) {
 		//put ram contents into file
+
+		/**
 		ofstream myfile;
 		myfile.open("RamDumpNew.txt");
 		for (int i = 0; i < ram->getSize(); i++) {
-			myfile << ram->getWord(i) << "\n";
+		myfile << ram->getWord(i) << "\n";
 		}
 		myfile.close();
+		**/
+
 
 
 		ram->clear();

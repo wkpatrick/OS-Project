@@ -227,6 +227,7 @@ void CPU::OPCode00(WORD opcode) //RD
 	WORD regTwo = (opcode & regTwoBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
+
 	Registers[0] = cacheTable.getWord(inputBufferRamADDR - this->pcb->codeStartRamAddress); //We do this so that the code start is 0;
 	//Registers[0] = cpuRAM.getWord(inputBufferRamADDR);
 	inputBufferRamADDR++;
@@ -268,7 +269,7 @@ void CPU::OPCode02(WORD opcode) //ST
 	}
 	else
 	{
-		cacheTable.setWord(address, Registers[baseReg]);
+		cacheTable.setWord(address, Registers[destReg]);
 	}
 
 }
@@ -401,11 +402,14 @@ void CPU::OPCode0B(WORD opcode) //MOVI
 
 	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 	{
-		Registers[destReg] = cpuTable.getWord(address);
+		//Registers[destReg] = cpuTable.getWord(address);
+		Registers[destReg] = address;
+
 	}
 	else
 	{
-		Registers[destReg] = cacheTable.getWord(address - this->pcb->codeStartRamAddress);
+		//Registers[destReg] = cacheTable.getWord(address - this->pcb->codeStartRamAddress);
+		Registers[destReg] = address;
 	}
 }
 
@@ -419,16 +423,18 @@ void CPU::OPCode0C(WORD opcode) //ADDI
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 	
+/*
+if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
+{
+Registers[destReg] += (cpuTable.getWord(address) + Registers[baseReg]);
+}
+else
+{
+Registers[destReg] += (cacheTable.getWord(address - this->pcb->codeStartRamAddress)) + Registers[baseReg];
+}
+*/
 
-	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
-	{
-		Registers[destReg] += (cpuTable.getWord(address) + Registers[baseReg]);
-	}
-	else
-	{
-		Registers[destReg] += (cacheTable.getWord(address - this->pcb->codeStartRamAddress)) + Registers[baseReg];
-	}
-
+	Registers[destReg] += address;
 
 	//Registers[destReg] += cpuRAM.getWord(address);
 
@@ -444,7 +450,8 @@ void CPU::OPCode0D(WORD opcode) //MULTI
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
-	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
+	/**
+		if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 	{
 		Registers[destReg] *= cpuTable.getWord(address);
 	}
@@ -452,6 +459,10 @@ void CPU::OPCode0D(WORD opcode) //MULTI
 	{
 		Registers[destReg] *= (cacheTable.getWord(address - this->pcb->codeStartRamAddress));
 	}
+	**/
+
+	Registers[destReg] *= address;
+
 }
 
 void CPU::OPCode0E(WORD opcode) //DIVI
@@ -464,6 +475,7 @@ void CPU::OPCode0E(WORD opcode) //DIVI
 	WORD baseReg = (opcode & baseRegBitMask) >> 20;
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
+	/**
 	if (Registers[baseReg] != 0)
 	{
 
@@ -477,6 +489,9 @@ void CPU::OPCode0E(WORD opcode) //DIVI
 		}
 	}
 		//Registers[destReg] = Registers[destReg] / cpuRAM.getWord(address);
+
+		**/
+	Registers[destReg] /= address;
 }
 
 void CPU::OPCode0F(WORD opcode)  //LDI
@@ -489,6 +504,7 @@ void CPU::OPCode0F(WORD opcode)  //LDI
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
+	/**
 	//Registers[destReg] = cpuRAM.getWord(address);
 	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 	{
@@ -498,6 +514,9 @@ void CPU::OPCode0F(WORD opcode)  //LDI
 	{
 		Registers[destReg] = cacheTable.getWord(address - this->pcb->codeStartRamAddress);
 	}
+	**/
+	Registers[destReg] = address;
+
 }
 
 void CPU::OPCode10(WORD opcode) //SLT

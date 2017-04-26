@@ -18,6 +18,7 @@ public:
 	void loadIntoFrames(Memory mem);
 	void reorderLastUsed(int pageNum);
 	WORD getWord(int index);
+	WORD getNoPageWord(int index);
 	void setWord(int index, WORD set);
 	bool isInLastUsed(int pageNum);
 

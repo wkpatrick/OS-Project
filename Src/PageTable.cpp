@@ -89,6 +89,13 @@ WORD PageTable::getWord(int index)
 	}
 }
 
+WORD PageTable::getNoPageWord(int index)
+{
+	int reqPageNum = index / 4;
+	int reqLine = index % 4;
+	return pages[reqPageNum].contents[reqLine];
+}
+
 void PageTable::setWord(int index, WORD set)
 {
 	int reqPageNum = index / 4;
