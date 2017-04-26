@@ -65,12 +65,6 @@ int main()
 		thread cpuThread3(runCPU, &cpu3, 3);
 		thread cpuThread4(runCPU, &cpu4, 4);
 
-		Memory cacheOne = cpu1.getCache();
-		Memory cacheTwo = cpu2.getCache();
-		Memory cacheThree = cpu3.getCache();
-		Memory cacheFour = cpu4.getCache();
-
-
 		if (cpuThread1.joinable())
 		{
 			cpuThread1.join();
@@ -93,26 +87,18 @@ int main()
 		ramLock.unlock();
 		ramLock.lock();
 
-		for (int i = cpu1.getCacheStart(); i < (cpu1.getCacheStart() + cpu1.getCacheSize()); i++)
+		cout << "test" << endl;
+
+		PageTable cacheOne = cpu1.getCacheTable();
+		PageTable cacheTwo = cpu2.getCacheTable();
+		PageTable cacheThree = cpu3.getCacheTable();
+		PageTable cacheFour = cpu4.getCacheTable();
+
+		for (int i = cpu1.inputBufferRamSize; i < cpu1.getCacheSize(); i++)
 		{
-			cacheOne = cpu1.getCache();
-			ram.setWord(i, cacheOne.getWord(i - cpu1.getCacheStart()));
+			cout << cacheOne.getWord(i) << endl;
 		}
-		for (int i = cpu2.getCacheStart(); i < (cpu2.getCacheStart() + cpu2.getCacheSize()); i++)
-		{
-			cacheTwo = cpu2.getCache();
-			ram.setWord(i, cacheTwo.getWord(i - cpu2.getCacheStart()));
-		}
-		for (int i = cpu3.getCacheStart(); i < (cpu3.getCacheStart() + cpu3.getCacheSize()); i++)
-		{
-			cacheThree = cpu3.getCache();
-			ram.setWord(i, cacheThree.getWord(i - cpu3.getCacheStart()));
-		}
-		for (int i = cpu4.getCacheStart(); i < (cpu4.getCacheStart() + cpu4.getCacheSize()); i++)
-		{
-			cacheFour = cpu4.getCache();
-			ram.setWord(i, cacheFour.getWord(i - cpu4.getCacheStart()));
-		}
+
 		ramLock.unlock();
 
 
@@ -144,12 +130,6 @@ int main()
 		cout << "Page Faults: " << pcbs.getPCB(i)->stats.pageFaults << endl;
 		cout << "CPU ID: " << pcbs.getPCB(i)->cpuID << endl << endl;
 	}
-
-	for (int i = 0; i < 1000; i++)
-	{
-		cout << ram.getWord(i) << endl;
-	}
-
 	int test;
 	std::cin >> test;
 

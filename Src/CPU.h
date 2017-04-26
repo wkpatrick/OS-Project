@@ -12,10 +12,6 @@ class CPU
 {
 	WORD Registers[16]; //16 32 bit registers, Reg[0] is the accumulator, Reg[1] is zero, and the rest are general purpose.
 	WORD ProgramCounter;
-	WORD inputBufferRamADDR;
-	WORD outputBufferRamADDR;
-	WORD inputBufferRamSize;
-	WORD outputBufferRamSize;
 	Memory cpuRAM;
 	Memory cache;
 	PCB *pcb;
@@ -30,6 +26,8 @@ public:
 	CPU(Memory *ram);
 	~CPU();
 
+	PageTable getCacheTable();
+
 	int busy; // 0 is idle, 1 is busy
 	WORD GetNextWord();
 	void BeginJob();
@@ -41,6 +39,11 @@ public:
 	Memory getCache();
 	int getCacheSize();
 	int getCacheStart();
+
+	WORD inputBufferRamADDR;
+	WORD outputBufferRamADDR;
+	WORD inputBufferRamSize;
+	WORD outputBufferRamSize;
 
 private:
 	void OPCode00(WORD opcode);

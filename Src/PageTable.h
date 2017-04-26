@@ -3,6 +3,7 @@
 #include "Memory.h"
 #include "PCB.h"
 #include <deque>
+#include <vector>
 
 typedef unsigned long int WORD;
 using namespace std;
@@ -22,7 +23,7 @@ public:
 
 	deque<int> lastUsed;
 	int numOfPages;
-	Page* pages; //The array of pages, set to be a pointer cause you cant make an empty array;
+	vector<Page> pages;
 	PCB *pcb;
 
 

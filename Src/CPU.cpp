@@ -36,7 +36,7 @@ Memory CPU::getCache()
 
 int CPU::getCacheSize()
 {
-	return this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize;
+	return this->pcb->codeSize + this->pcb->inputBufferSize + this->pcb->outputBufferSize + this->pcb->tempBufferSize;
 }
 
 int CPU::getCacheStart()
@@ -67,12 +67,13 @@ void CPU::BeginJob(int id)
 
 	this->pcb->stats.beginTime = high_resolution_clock::now();
 
-	int cacheSize = this->pcb->codeSize + this->pcb->outputBufferSize + this->pcb->inputBufferSize;
+	int cacheSize = this->pcb->codeSize + this->pcb->outputBufferSize + this->pcb->inputBufferSize + this->pcb->tempBufferSize;
 
 	this->cache = Memory(cacheSize);
 	this->cpuTable = PageTable(this->pcb);
 	this->cacheTable = PageTable(this->pcb);
 	cpuTable.loadIntoFrames(cpuRAM);
+	cacheTable.loadIntoFrames(cache);
 
 
 
@@ -83,7 +84,7 @@ void CPU::BeginJob(int id)
 		cacheTable.setWord(i, input);
 	}
 
-	cacheTable.loadIntoFrames(cache);  //Put down here so we dont get all sorts of page faults.
+	//cacheTable.loadIntoFrames(cache);  //Put down here so we dont get all sorts of page faults.
 
 	int inputCount = 0;
 	int outputCount = 0;
@@ -226,7 +227,7 @@ void CPU::OPCode00(WORD opcode) //RD
 	WORD regTwo = (opcode & regTwoBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
-	Registers[0] = cacheTable.getWord(inputBufferRamADDR - this->pcb->codeStartRamAddress);
+	Registers[0] = cacheTable.getWord(inputBufferRamADDR - this->pcb->codeStartRamAddress); //We do this so that the code start is 0;
 	//Registers[0] = cpuRAM.getWord(inputBufferRamADDR);
 	inputBufferRamADDR++;
 	
@@ -260,7 +261,7 @@ void CPU::OPCode02(WORD opcode) //ST
 	WORD address = (opcode & addressBitMask);
 
 
-	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize()) 
 	{
 		//cpuRAM.setWord(address, Registers[baseReg]);
 		cpuTable.setWord(address, Registers[baseReg]);
@@ -398,7 +399,7 @@ void CPU::OPCode0B(WORD opcode) //MOVI
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
-	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 	{
 		Registers[destReg] = cpuTable.getWord(address);
 	}
@@ -419,7 +420,7 @@ void CPU::OPCode0C(WORD opcode) //ADDI
 	WORD address = (opcode & addressBitMask);
 	
 
-	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 	{
 		Registers[destReg] += (cpuTable.getWord(address) + Registers[baseReg]);
 	}
@@ -443,7 +444,7 @@ void CPU::OPCode0D(WORD opcode) //MULTI
 	WORD destReg = (opcode & destRegBitMask) >> 16;
 	WORD address = (opcode & addressBitMask);
 
-	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 	{
 		Registers[destReg] *= cpuTable.getWord(address);
 	}
@@ -466,7 +467,7 @@ void CPU::OPCode0E(WORD opcode) //DIVI
 	if (Registers[baseReg] != 0)
 	{
 
-		if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
+		if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 		{
 			Registers[destReg] = Registers[destReg]/cpuTable.getWord(address);
 		}
@@ -489,7 +490,7 @@ void CPU::OPCode0F(WORD opcode)  //LDI
 	WORD address = (opcode & addressBitMask);
 
 	//Registers[destReg] = cpuRAM.getWord(address);
-	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + cache.getSize())
+	if (address < this->pcb->codeStartRamAddress || address > this->pcb->codeStartRamAddress + getCacheSize())
 	{
 		Registers[destReg] = cpuTable.getWord(address);
 	}
@@ -651,5 +652,10 @@ void CPU::OPCode1A(WORD opcode) //BLZ
 	{
 		ProgramCounter = address;
 	}
+}
+
+PageTable CPU::getCacheTable()
+{
+	return this->cacheTable;
 }
 

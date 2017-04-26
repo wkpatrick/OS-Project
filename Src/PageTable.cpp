@@ -11,7 +11,7 @@ PageTable::PageTable(PCB *pcb)
 
 PageTable::PageTable()
 {
-
+	pcb = NULL;
 }
 
 
@@ -21,12 +21,13 @@ PageTable::~PageTable()
 
 void PageTable::loadIntoFrames(Memory mem)
 {
-	this->numOfPages = mem.getCapacity() / 4 +1;
-	this->pages = new Page[numOfPages];
+	this->numOfPages = mem.getCapacity() / 4 + 1;
+	this->pages = vector<Page>(numOfPages);
 
 	int addr = 0;
 	for (int i = 0; i < numOfPages; i++)
 	{
+
 		for (int j = 0; j < 4; j++)
 		{
 			pages[i].contents[j] = mem.getWord((i * 4) + j);
@@ -84,7 +85,7 @@ WORD PageTable::getWord(int index)
 
 		this->lastUsed.push_front(reqPageNum);
 		this->lastUsed.resize(4);
-		return this->pages[reqPageNum].contents[reqLine];
+		return pages[reqPageNum].contents[reqLine];
 	}
 }
 
@@ -111,7 +112,8 @@ void PageTable::setWord(int index, WORD set)
 		this->lastUsed.resize(4);
 	}
 
-	this->pages[reqPageNum].contents[reqLine] == set;
+	this->pages[reqPageNum].contents[reqLine] = set;
+	//this->pages.at(reqPageNum).contents[reqLine] = set;
 }
 
 bool PageTable::isInLastUsed(int pageNum)
